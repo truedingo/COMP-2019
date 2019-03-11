@@ -72,24 +72,16 @@ STRLIT 	\"([^\n\r\"\\]|(\\f|\\n|\\r|\\t|\\\\|\\\"))*\"
 TEXT_COMMENT [^\r\n]*
 RETURNCHAR \r
 LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
-SPACE " "
+
 
 %%
 
 {SINGLE_COMMENT}{TEXT_COMMENT}  {COLUNA;}
-{START_COMMENT}                 {BEGIN COMMENTS; c_atual=coluna; l_atual=linha;COLUNA;}
+{START_COMMENT}                 {BEGIN COMMENTS;c_atual=coluna; l_atual=linha;COLUNA;}
 <COMMENTS>("\n")                {LINHA;}
 <COMMENTS>(.)                   {COLUNA;}
-<COMMENTS><<EOF>>               {BEGIN 0; printf("Line %d, col %d: unterminated comment\n", l_atual, c_atual);COLUNA;}
+<COMMENTS><<EOF>>               {BEGIN 0;printf("Line %d, col %d: unterminated comment\n", l_atual, c_atual);COLUNA;}
 <COMMENTS>{END_COMMENT}         {BEGIN 0;COLUNA;}
-
-
-{START_STRLIT}                  {BEGIN STRLIT_LINE; c_atual=coluna; l_atual=linha;COLUNA;}
-<STRLIT_LINE>{ESCAPE}           {COLUNA;}
-<STRLIT_LINE><<EOF>>            {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", l_atual, c_atual); COLUNA;}
-<STRLIT_LINE>{LINETERMINATOR}   {BEGIN 0; linha++;coluna=1; printf("Line %d, col %d: unterminated string literal\n", l_atual, c_atual);}
-<STRLIT_LINE>{INVALID}          {printf("Line %d, column %d: invalid escape sequence (%s)\n", l_atual, c_atual, yytext); COLUNA;}
-<STRLIT_LINE>(.)                {COLUNA;}
 
 
 {SEMICOLON} {if(flag==-1 && val == 1){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA}
@@ -136,7 +128,7 @@ SPACE " "
 {INTLIT} {if(flag==-1 && val == 1){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
 {STRLIT} {if(flag==-1 && val == 1){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;}
 {LINETERMINATOR} {if(flag_semicolon == 1){printf("SEMICOLON\n");} flag_semicolon = 0; LINHA;}
-{SPACE} {;}
+"\t"|" "    {COLUNA;}
 
 .       {printf("Line %d, column %d: illegal character (%s)\n", linha, coluna, yytext); flag_semicolon = 0; COLUNA;} 
 
