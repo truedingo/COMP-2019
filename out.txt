@@ -1,7 +1,27 @@
-ID(agagagagagag)
-Line 1, column 14: illegal character (~)
-INTLIT(12345)
-Line 2, column 6: illegal character (~)
-INTLIT(12)
-Line 3, column 3: illegal character (~)
-Line 3, column 4: illegal character (~)
+STRLIT("str1")
+SEMICOLON
+STRLIT("str2")
+SEMICOLON
+ID(str4)
+SEMICOLON
+ID(str5)
+SEMICOLON
+ID(str6)
+SEMICOLON
+DIV
+ID(str9)
+SEMICOLON
+ID(str13)
+SEMICOLON
+Line 10, column 1: illegal character (")
+ID(str14)
+SEMICOLON
+ID(str15)
+SEMICOLON
+STRLIT("str16")
+SEMICOLON
+ID(str18)
+SEMICOLON
+ID(str19)
+SEMICOLON
+Line 16, column 17: unterminated comment
