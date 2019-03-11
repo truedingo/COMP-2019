@@ -1,7 +1,6 @@
-STRLIT("string 1 \f")
+Line 1, column 14: invalid escape sequence (\c)
+STRLIT("ola")
 SEMICOLON
-ID(id1)
-SEMICOLON
-ID(id2)
-STRING
-Line 3, column 89: unterminated string literal
+Line 4, column 6: unterminated string literal
+INTLIT(008)
+Line 4, column 15: unterminated string literal

@@ -91,7 +91,6 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 <STRLIT_STATE>.  {COLUNA;}
 
 
-
 {SEMICOLON} {if(flag==-1 && val == 1){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA}
 {BLANKID} {if(flag==-1 && val == 1){printf("BLANKID\n");} flag_semicolon = 0; COLUNA}
 {PACKAGE} {if(flag==-1 && val == 1){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA}
