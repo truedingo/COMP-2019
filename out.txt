@@ -1,27 +1,7 @@
-STRLIT("str1")
+STRLIT("string 1 \f")
 SEMICOLON
-STRLIT("str2")
+ID(id1)
 SEMICOLON
-ID(str4)
-SEMICOLON
-ID(str5)
-SEMICOLON
-ID(str6)
-SEMICOLON
-DIV
-ID(str9)
-SEMICOLON
-ID(str13)
-SEMICOLON
-Line 10, column 1: illegal character (")
-ID(str14)
-SEMICOLON
-ID(str15)
-SEMICOLON
-STRLIT("str16")
-SEMICOLON
-ID(str18)
-SEMICOLON
-ID(str19)
-SEMICOLON
-Line 16, column 17: unterminated comment
+ID(id2)
+STRING
+Line 3, column 89: unterminated string literal

@@ -21,8 +21,7 @@
 START_COMMENT "/*"
 END_COMMENT "*/"
 SINGLE_COMMENT "//"
-%x STRLIT_LINE
-START_STRLIT "\""
+%x STRLIT_STATE
 INVALID \\.|\\
 SEMICOLON ";"
 BLANKID "_"
@@ -64,7 +63,7 @@ FUNC "func"
 CMDARGS "os.Args"
 CHARACTER [a-zA-Z]
 RESERVED "break"|"case"|"chan"|"const"|"continue"|"default"|"defer"|"fallthrough"|"func"|"go"|"goto"|"import"|"interface"|"map"|"range"|"select"|"struct"|"switch"|"type"|"++"|"--"
-ESCAPE \n|\t|\\|\'|\"
+ESCAPE \n|\t|\\|\'
 REALLIT [0-9]+[.]([0-9]+)?(([e]|[E])([+]|[-])?[0-9]+)?|[0-9]+([e]|[E])([+]|[-])?[0-9]+|[.][0-9]+(([e]|[E])([+]|[-])?[0-9]+)?
 INTLIT [0-9]+|(0[0-9]+)|(0[x][a-fA-F0-9]+)|(0[X][a-fA-F0-9]+)
 ID ([a-zA-Z]|[_])([a-zA-Z]|[_]|[0-9])*
@@ -75,12 +74,23 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 
 
 %%
+
 {SINGLE_COMMENT}{TEXT_COMMENT} {COLUNA;}
 {START_COMMENT} {BEGIN COMMENTS; c_atual=coluna; l_atual=linha;COLUNA;}
 <COMMENTS>("\n") {LINHA;}
 <COMMENTS>(.) {COLUNA;}
 <COMMENTS><<EOF>> {BEGIN 0; printf("Line %d, column %d: unterminated comment\n", l_atual, c_atual);COLUNA;}
 <COMMENTS>{END_COMMENT} {BEGIN 0;COLUNA;}
+
+"\""    {BEGIN STRLIT_STATE;COLUNA;}
+<STRLIT_STATE>{ESCAPE}  {COLUNA;}
+<STRLIT_STATE>{INVALID}  {printf("Line %d, column %d: invalid escape sequence (%s)\n", linha, coluna, yytext);}
+<STRLIT_STATE><<EOF>>  {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", linha, coluna);}
+<STRLIT_STATE>{LINETERMINATOR} {BEGIN 0;printf("Line %d, column %d: unterminated string literal\n", linha, coluna);COLUNA;}
+<STRLIT_STATE>"\"" {BEGIN 0; COLUNA;}
+<STRLIT_STATE>.  {COLUNA;}
+
+
 
 {SEMICOLON} {if(flag==-1 && val == 1){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA}
 {BLANKID} {if(flag==-1 && val == 1){printf("BLANKID\n");} flag_semicolon = 0; COLUNA}
