@@ -14,6 +14,7 @@
     int coluna=1;
     int c_atual=1;
     int l_atual=1;
+    int aux[2];
 
 %}
 
@@ -82,11 +83,11 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 <COMMENTS><<EOF>> {BEGIN 0; printf("Line %d, column %d: unterminated comment\n", l_atual, c_atual);COLUNA;}
 <COMMENTS>{END_COMMENT} {BEGIN 0;COLUNA;}
 
-"\""    {BEGIN STRLIT_STATE;COLUNA;}
+"\""    {BEGIN STRLIT_STATE;aux[0]= linha; aux[1] = coluna;COLUNA;}
 <STRLIT_STATE>{ESCAPE}  {COLUNA;}
-<STRLIT_STATE>{INVALID}  {printf("Line %d, column %d: invalid escape sequence (%s)\n", linha, coluna, yytext);}
-<STRLIT_STATE><<EOF>>  {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", linha, coluna);}
-<STRLIT_STATE>{LINETERMINATOR} {BEGIN 0;printf("Line %d, column %d: unterminated string literal\n", linha, coluna);COLUNA;}
+<STRLIT_STATE>{INVALID}  {printf("Line %d, column %d: invalid escape sequence (%s)\n", linha, coluna, yytext);COLUNA;}
+<STRLIT_STATE><<EOF>>  {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", aux[0], aux[1]);COLUNA;}
+<STRLIT_STATE>{LINETERMINATOR} {BEGIN 0;printf("Line %d, column %d: unterminated string literal\n", aux[0], aux[1]);LINHA;}
 <STRLIT_STATE>"\"" {BEGIN 0; COLUNA;}
 <STRLIT_STATE>.  {COLUNA;}
 
