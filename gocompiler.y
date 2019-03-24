@@ -21,7 +21,7 @@
 %right NOT
 %left RPAR LPAR
 
-%nonassoc   ELSE
+%nonassoc   ELSE IF
 //%token Program Declarations VarDeclaration VarSpec Type FuncDeclaration Parameters FuncBody VarsAndStatements Statement ParseArgs FuncInvocation Expr  
 
 %%

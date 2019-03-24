@@ -135,7 +135,7 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return ID;}
 {INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return INTLIT;}
 {STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;return STRLIT;}
-{LINETERMINATOR} {if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n"); return SEMICOLON;} flag_semicolon = 0; LINHA;}
+{LINETERMINATOR} {LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;return SEMICOLON;}}
 "\t"|" "    {COLUNA;}
 
 .       {printf("Line %d, column %d: illegal character (%s)\n", linha, coluna, yytext); flag_semicolon = 0; COLUNA;} 
@@ -145,7 +145,7 @@ int main(int argc, char* argv[]){
     if(argc > 1){
         if(strcmp(argv[1], "-l") == 0){
             flag=-1;
-            yylex();
+            //yylex();
         }
         if(strcmp(argv[1], "-t") == 0){
             flag=-2;
