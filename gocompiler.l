@@ -1,10 +1,9 @@
 /* Diogo Amores 2015231975 damores@student.uc.pt */
 /* Maria Roseiro 2015233281 miroseiro@student.dei.uc.pt */
 %{
-    int yylex();
-    int yyparse();
     #include <stdio.h>
     #include <string.h>
+    #include "y.tab.h"
     #define LINHA linha++; coluna=1;
     #define COLUNA coluna+=yyleng;
     int flag_semicolon=0;
@@ -16,6 +15,7 @@
     //string errors
     int ste_line;
     int ste_column;
+    int yyparse();
 
 %}
 
@@ -92,49 +92,49 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 <STRLIT_STATE>.  {COLUNA;}
 
 
-{SEMICOLON} {if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA}
-{BLANKID} {if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA}
-{PACKAGE} {if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA}
-{RETURN} {if(flag==-1 ){printf("RETURN\n");} flag_semicolon = 1; COLUNA}
-{AND} {if(flag==-1 ){printf("AND\n");} flag_semicolon = 0; COLUNA}
-{ASSIGN} {if(flag==-1 ){printf("ASSIGN\n");} flag_semicolon = 0; COLUNA}
-{STAR} {if(flag==-1 ){printf("STAR\n");} flag_semicolon = 0; COLUNA}
-{COMMA} {if(flag==-1 ){printf("COMMA\n");} flag_semicolon = 0; COLUNA}
-{DIV} {if(flag==-1 ){printf("DIV\n");} flag_semicolon = 0; COLUNA}
-{EQ} {if(flag==-1 ){printf("EQ\n");} flag_semicolon = 0; COLUNA}
-{GE} {if(flag==-1 ){printf("GE\n");} flag_semicolon = 0; COLUNA}
-{GT} {if(flag==-1 ){printf("GT\n");} flag_semicolon = 0; COLUNA}
-{LBRACE} {if(flag==-1 ){printf("LBRACE\n");} flag_semicolon = 0; COLUNA}
-{LE} {if(flag==-1 ){printf("LE\n");} flag_semicolon = 0; COLUNA}
-{LPAR} {if(flag==-1 ){printf("LPAR\n");} flag_semicolon = 0; COLUNA}
-{LSQ} {if(flag==-1 ){printf("LSQ\n");} flag_semicolon = 0; COLUNA}
-{LT} {if(flag==-1 ){printf("LT\n");} flag_semicolon = 0; COLUNA}
-{MINUS} {if(flag==-1 ){printf("MINUS\n");} flag_semicolon = 0; COLUNA}
-{MOD} {if(flag==-1 ){printf("MOD\n");} flag_semicolon = 0; COLUNA}
-{NE} {if(flag==-1 ){printf("NE\n");} flag_semicolon = 0; COLUNA}
-{NOT} {if(flag==-1 ){printf("NOT\n");} flag_semicolon = 0; COLUNA}
-{OR} {if(flag==-1 ){printf("OR\n");} flag_semicolon = 0; COLUNA}
-{PLUS} {if(flag==-1 ){printf("PLUS\n");} flag_semicolon = 0; COLUNA}
-{RBRACE} {if(flag==-1 ){printf("RBRACE\n");} flag_semicolon = 1; COLUNA}
-{RPAR} {if(flag==-1 ){printf("RPAR\n");} flag_semicolon = 1; COLUNA}
-{RSQ} {if(flag==-1 ){printf("RSQ\n");} flag_semicolon = 1; COLUNA}
-{ELSE} {if(flag==-1 ){printf("ELSE\n");} flag_semicolon = 0; COLUNA}
-{FOR} {if(flag==-1 ){printf("FOR\n");} flag_semicolon = 0; COLUNA}
-{IF} {if(flag==-1 ){printf("IF\n");} flag_semicolon = 0; COLUNA}
-{VAR} {if(flag==-1 ){printf("VAR\n");} flag_semicolon = 0; COLUNA}
-{INT} {if(flag==-1 ){printf("INT\n");} flag_semicolon = 0; COLUNA}
-{FLOAT32} {if(flag==-1 ){printf("FLOAT32\n");} flag_semicolon = 0; COLUNA}
-{BOOL} {if(flag==-1 ){printf("BOOL\n");} flag_semicolon = 0; COLUNA}
-{STRING} {if(flag==-1 ){printf("STRING\n");} flag_semicolon = 0; COLUNA}
-{PRINT} {if(flag==-1 ){printf("PRINT\n");} flag_semicolon = 0; COLUNA}
-{PARSEINT} {if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA}
-{FUNC} {if(flag==-1 ){printf("FUNC\n");} flag_semicolon = 0; COLUNA}
-{CMDARGS} {if(flag==-1 ){printf("CMDARGS\n");} flag_semicolon = 0; COLUNA}
-{REALLIT} {if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
-{RESERVED} {if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA;}
-{ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
-{INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
-{STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;}
+{SEMICOLON} {if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA; return SEMICOLON;}
+{BLANKID} {if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA; return BLANKID;}
+{PACKAGE} {if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA; return PACKAGE;}
+{RETURN} {if(flag==-1 ){printf("RETURN\n");} flag_semicolon = 1; COLUNA; return RETURN;}
+{AND} {if(flag==-1 ){printf("AND\n");} flag_semicolon = 0; COLUNA; return AND;}
+{ASSIGN} {if(flag==-1 ){printf("ASSIGN\n");} flag_semicolon = 0; COLUNA; return ASSIGN;}
+{STAR} {if(flag==-1 ){printf("STAR\n");} flag_semicolon = 0; COLUNA; return STAR;}
+{COMMA} {if(flag==-1 ){printf("COMMA\n");} flag_semicolon = 0; COLUNA; return COMMA;}
+{DIV} {if(flag==-1 ){printf("DIV\n");} flag_semicolon = 0; COLUNA; return DIV;}
+{EQ} {if(flag==-1 ){printf("EQ\n");} flag_semicolon = 0; COLUNA; return EQ;}
+{GE} {if(flag==-1 ){printf("GE\n");} flag_semicolon = 0; COLUNA; return GE;}
+{GT} {if(flag==-1 ){printf("GT\n");} flag_semicolon = 0; COLUNA; return GT;}
+{LBRACE} {if(flag==-1 ){printf("LBRACE\n");} flag_semicolon = 0; COLUNA; return LBRACE;}
+{LE} {if(flag==-1 ){printf("LE\n");} flag_semicolon = 0; COLUNA; return LE;}
+{LPAR} {if(flag==-1 ){printf("LPAR\n");} flag_semicolon = 0; COLUNA; return LPAR;}
+{LSQ} {if(flag==-1 ){printf("LSQ\n");} flag_semicolon = 0; COLUNA; return LSQ;}
+{LT} {if(flag==-1 ){printf("LT\n");} flag_semicolon = 0; COLUNA; return LT;}
+{MINUS} {if(flag==-1 ){printf("MINUS\n");} flag_semicolon = 0; COLUNA; return MINUS;}
+{MOD} {if(flag==-1 ){printf("MOD\n");} flag_semicolon = 0; COLUNA; return MOD;}
+{NE} {if(flag==-1 ){printf("NE\n");} flag_semicolon = 0; COLUNA; return NE;}
+{NOT} {if(flag==-1 ){printf("NOT\n");} flag_semicolon = 0; COLUNA; return NOT;}
+{OR} {if(flag==-1 ){printf("OR\n");} flag_semicolon = 0; COLUNA; return OR;}
+{PLUS} {if(flag==-1 ){printf("PLUS\n");} flag_semicolon = 0; COLUNA; return PLUS;}
+{RBRACE} {if(flag==-1 ){printf("RBRACE\n");} flag_semicolon = 1; COLUNA; return RBRACE;}
+{RPAR} {if(flag==-1 ){printf("RPAR\n");} flag_semicolon = 1; COLUNA; return RPAR;}
+{RSQ} {if(flag==-1 ){printf("RSQ\n");} flag_semicolon = 1; COLUNA; return RSQ;}
+{ELSE} {if(flag==-1 ){printf("ELSE\n");} flag_semicolon = 0; COLUNA; return ELSE;}
+{FOR} {if(flag==-1 ){printf("FOR\n");} flag_semicolon = 0; COLUNA; return FOR;}
+{IF} {if(flag==-1 ){printf("IF\n");} flag_semicolon = 0; COLUNA; return IF;}
+{VAR} {if(flag==-1 ){printf("VAR\n");} flag_semicolon = 0; COLUNA; return VAR;}
+{INT} {if(flag==-1 ){printf("INT\n");} flag_semicolon = 0; COLUNA; return INT;}
+{FLOAT32} {if(flag==-1 ){printf("FLOAT32\n");} flag_semicolon = 0; COLUNA; return FLOAT32;}
+{BOOL} {if(flag==-1 ){printf("BOOL\n");} flag_semicolon = 0; COLUNA; return BOOL;}
+{STRING} {if(flag==-1 ){printf("STRING\n");} flag_semicolon = 0; COLUNA; return STRING;}
+{PRINT} {if(flag==-1 ){printf("PRINT\n");} flag_semicolon = 0; COLUNA; return PRINT;}
+{PARSEINT} {if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA; return PARSEINT;}
+{FUNC} {if(flag==-1 ){printf("FUNC\n");} flag_semicolon = 0; COLUNA; return FUNC;}
+{CMDARGS} {if(flag==-1 ){printf("CMDARGS\n");} flag_semicolon = 0; COLUNA; return CMDARGS;}
+{REALLIT} {if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return REALLIT;}
+{RESERVED} {if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA;return RESERVED;}
+{ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return ID;}
+{INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return INTLIT;}
+{STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;return STRLIT;}
 {LINETERMINATOR} {if(flag_semicolon == 1){printf("SEMICOLON\n");} flag_semicolon = 0; LINHA;}
 "\t"|" "    {COLUNA;}
 
@@ -145,12 +145,21 @@ int main(int argc, char* argv[]){
     if(argc > 1){
         if(strcmp(argv[1], "-l") == 0){
             flag=-1;
+            yylex();
         }
     }
-    yylex();
+       if(strcmp(argv[1], "-t") == 0){
+            flag=-2;
+        }
+    }
+    yyparse();
     return 0;
 }
 int yywrap()
 {
 return 1;
+}
+
+void yyerror (const char *s) { 
+     printf ("Line %d, col %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
 }

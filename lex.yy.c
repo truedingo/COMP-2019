@@ -616,10 +616,9 @@ char *yytext;
 /* Diogo Amores 2015231975 damores@student.uc.pt */
 /* Maria Roseiro 2015233281 miroseiro@student.dei.uc.pt */
 #line 4 "gocompiler.l"
-    int yylex();
-    int yyparse();
     #include <stdio.h>
     #include <string.h>
+    #include "y.tab.h"
     #define LINHA linha++; coluna=1;
     #define COLUNA coluna+=yyleng;
     int flag_semicolon=0;
@@ -631,6 +630,7 @@ char *yytext;
     //string errors
     int ste_line;
     int ste_column;
+    int yyparse();
 
 
 
@@ -972,223 +972,223 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 95 "gocompiler.l"
-{if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA; return SEMICOLON;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 96 "gocompiler.l"
-{if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA; return BLANKID;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 97 "gocompiler.l"
-{if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA; return PACKAGE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 98 "gocompiler.l"
-{if(flag==-1 ){printf("RETURN\n");} flag_semicolon = 1; COLUNA}
+{if(flag==-1 ){printf("RETURN\n");} flag_semicolon = 1; COLUNA; return RETURN;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 99 "gocompiler.l"
-{if(flag==-1 ){printf("AND\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("AND\n");} flag_semicolon = 0; COLUNA; return AND;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 100 "gocompiler.l"
-{if(flag==-1 ){printf("ASSIGN\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("ASSIGN\n");} flag_semicolon = 0; COLUNA; return ASSIGN;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 101 "gocompiler.l"
-{if(flag==-1 ){printf("STAR\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("STAR\n");} flag_semicolon = 0; COLUNA; return STAR;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 102 "gocompiler.l"
-{if(flag==-1 ){printf("COMMA\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("COMMA\n");} flag_semicolon = 0; COLUNA; return COMMA;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 103 "gocompiler.l"
-{if(flag==-1 ){printf("DIV\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("DIV\n");} flag_semicolon = 0; COLUNA; return DIV;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 104 "gocompiler.l"
-{if(flag==-1 ){printf("EQ\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("EQ\n");} flag_semicolon = 0; COLUNA; return EQ;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 105 "gocompiler.l"
-{if(flag==-1 ){printf("GE\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("GE\n");} flag_semicolon = 0; COLUNA; return GE;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 106 "gocompiler.l"
-{if(flag==-1 ){printf("GT\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("GT\n");} flag_semicolon = 0; COLUNA; return GT;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 107 "gocompiler.l"
-{if(flag==-1 ){printf("LBRACE\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("LBRACE\n");} flag_semicolon = 0; COLUNA; return LBRACE;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 108 "gocompiler.l"
-{if(flag==-1 ){printf("LE\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("LE\n");} flag_semicolon = 0; COLUNA; return LE;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 109 "gocompiler.l"
-{if(flag==-1 ){printf("LPAR\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("LPAR\n");} flag_semicolon = 0; COLUNA; return LPAR;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 110 "gocompiler.l"
-{if(flag==-1 ){printf("LSQ\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("LSQ\n");} flag_semicolon = 0; COLUNA; return LSQ;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 111 "gocompiler.l"
-{if(flag==-1 ){printf("LT\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("LT\n");} flag_semicolon = 0; COLUNA; return LT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 112 "gocompiler.l"
-{if(flag==-1 ){printf("MINUS\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("MINUS\n");} flag_semicolon = 0; COLUNA; return MINUS;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 113 "gocompiler.l"
-{if(flag==-1 ){printf("MOD\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("MOD\n");} flag_semicolon = 0; COLUNA; return MOD;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 114 "gocompiler.l"
-{if(flag==-1 ){printf("NE\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("NE\n");} flag_semicolon = 0; COLUNA; return NE;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 115 "gocompiler.l"
-{if(flag==-1 ){printf("NOT\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("NOT\n");} flag_semicolon = 0; COLUNA; return NOT;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 116 "gocompiler.l"
-{if(flag==-1 ){printf("OR\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("OR\n");} flag_semicolon = 0; COLUNA; return OR;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 117 "gocompiler.l"
-{if(flag==-1 ){printf("PLUS\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("PLUS\n");} flag_semicolon = 0; COLUNA; return PLUS;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 118 "gocompiler.l"
-{if(flag==-1 ){printf("RBRACE\n");} flag_semicolon = 1; COLUNA}
+{if(flag==-1 ){printf("RBRACE\n");} flag_semicolon = 1; COLUNA; return RBRACE;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 119 "gocompiler.l"
-{if(flag==-1 ){printf("RPAR\n");} flag_semicolon = 1; COLUNA}
+{if(flag==-1 ){printf("RPAR\n");} flag_semicolon = 1; COLUNA; return RPAR;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 120 "gocompiler.l"
-{if(flag==-1 ){printf("RSQ\n");} flag_semicolon = 1; COLUNA}
+{if(flag==-1 ){printf("RSQ\n");} flag_semicolon = 1; COLUNA; return RSQ;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 121 "gocompiler.l"
-{if(flag==-1 ){printf("ELSE\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("ELSE\n");} flag_semicolon = 0; COLUNA; return ELSE;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 122 "gocompiler.l"
-{if(flag==-1 ){printf("FOR\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("FOR\n");} flag_semicolon = 0; COLUNA; return FOR;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 123 "gocompiler.l"
-{if(flag==-1 ){printf("IF\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("IF\n");} flag_semicolon = 0; COLUNA; return IF;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 124 "gocompiler.l"
-{if(flag==-1 ){printf("VAR\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("VAR\n");} flag_semicolon = 0; COLUNA; return VAR;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 125 "gocompiler.l"
-{if(flag==-1 ){printf("INT\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("INT\n");} flag_semicolon = 0; COLUNA; return INT;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 126 "gocompiler.l"
-{if(flag==-1 ){printf("FLOAT32\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("FLOAT32\n");} flag_semicolon = 0; COLUNA; return FLOAT32;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 127 "gocompiler.l"
-{if(flag==-1 ){printf("BOOL\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("BOOL\n");} flag_semicolon = 0; COLUNA; return BOOL;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 128 "gocompiler.l"
-{if(flag==-1 ){printf("STRING\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("STRING\n");} flag_semicolon = 0; COLUNA; return STRING;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 129 "gocompiler.l"
-{if(flag==-1 ){printf("PRINT\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("PRINT\n");} flag_semicolon = 0; COLUNA; return PRINT;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 130 "gocompiler.l"
-{if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA; return PARSEINT;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 131 "gocompiler.l"
-{if(flag==-1 ){printf("FUNC\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("FUNC\n");} flag_semicolon = 0; COLUNA; return FUNC;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 132 "gocompiler.l"
-{if(flag==-1 ){printf("CMDARGS\n");} flag_semicolon = 0; COLUNA}
+{if(flag==-1 ){printf("CMDARGS\n");} flag_semicolon = 0; COLUNA; return CMDARGS;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 133 "gocompiler.l"
-{if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
+{if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return REALLIT;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 134 "gocompiler.l"
-{if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA;}
+{if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA;return RESERVED;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 135 "gocompiler.l"
-{if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
+{if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return ID;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 136 "gocompiler.l"
-{if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;}
+{if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return INTLIT;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 137 "gocompiler.l"
-{if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;}
+{if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;return STRLIT;}
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
 #line 138 "gocompiler.l"
-{if(flag_semicolon == 1){printf("SEMICOLON\n");} flag_semicolon = 0; LINHA;}
+{if(flag_semicolon == 1){printf("SEMICOLON\n");} flag_semicolon = 0; LINHA;;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
@@ -2212,9 +2212,14 @@ int main(int argc, char* argv[]){
         }
     }
     yylex();
+    yyparse();
     return 0;
 }
 int yywrap()
 {
 return 1;
+}
+
+void yyerror (const char *s) { 
+     printf ("Line %d, col %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
 }

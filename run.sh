@@ -1,2 +1,4 @@
-lex gocompiler.l  
-clang-3.8 -o gocompiler lex.yy.c
+#!/bin/sh 
+lex gocompiler.l 
+yacc -d gocompiler.y
+cc -o y.output y.tab.c lex.yy.c 
