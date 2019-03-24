@@ -2,6 +2,7 @@
 /* Maria Roseiro 2015233281 miroseiro@student.dei.uc.pt */
 %{
     #include <stdio.h>
+    #include <stdlib.h>
     #include <string.h>
     #include "y.tab.h"
     #define LINHA linha++; coluna=1;
@@ -15,7 +16,6 @@
     //string errors
     int ste_line;
     int ste_column;
-    int yyparse();
 
 %}
 
@@ -135,7 +135,7 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return ID;}
 {INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;return INTLIT;}
 {STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;return STRLIT;}
-{LINETERMINATOR} {if(flag_semicolon == 1){printf("SEMICOLON\n");} flag_semicolon = 0; LINHA;}
+{LINETERMINATOR} {if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n"); return SEMICOLON;} flag_semicolon = 0; LINHA;}
 "\t"|" "    {COLUNA;}
 
 .       {printf("Line %d, column %d: illegal character (%s)\n", linha, coluna, yytext); flag_semicolon = 0; COLUNA;} 
@@ -147,8 +147,7 @@ int main(int argc, char* argv[]){
             flag=-1;
             yylex();
         }
-    }
-       if(strcmp(argv[1], "-t") == 0){
+        if(strcmp(argv[1], "-t") == 0){
             flag=-2;
         }
     }
@@ -161,5 +160,5 @@ return 1;
 }
 
 void yyerror (const char *s) { 
-     printf ("Line %d, col %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
+     printf ("Line %d, column %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
 }

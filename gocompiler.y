@@ -1,14 +1,14 @@
 %{
     #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
     int yylex(void);
     void yyerror (const char *s);
 %}
 
-%token SEMICOLON BLANKID PACKAGE RETURN AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ ELSE FOR IF VAR INT FLOAT32 BOOL STRING PRINT PARSEINT FUNC CMDARGS
-%token <string> REALLIT RESERVED ID INTLIT STRLIT
 
-%nonassoc   IF
-%nonassoc   ELSE
+%token SEMICOLON BLANKID PACKAGE RETURN AND ASSIGN STAR COMMA DIV EQ GE GT LBRACE LE LPAR LSQ LT MINUS MOD NE NOT OR PLUS RBRACE RPAR RSQ ELSE FOR IF VAR INT FLOAT32 BOOL STRING PRINT PARSEINT FUNC CMDARGS
+%token REALLIT RESERVED ID INTLIT STRLIT
 
 %left   COMMA
 %right  ASSIGN
@@ -20,6 +20,8 @@
 %left   STAR DIV MOD
 %right NOT
 %left RPAR LPAR
+
+%nonassoc   ELSE
 //%token Program Declarations VarDeclaration VarSpec Type FuncDeclaration Parameters FuncBody VarsAndStatements Statement ParseArgs FuncInvocation Expr  
 
 %%
@@ -42,8 +44,7 @@ VarSpec:
     ;
 
 CommaAux: /* empty */ 
-     |  COMMA ID CommaAux
-    
+     |  COMMA ID CommaAux   
     ;
 
 Type:
