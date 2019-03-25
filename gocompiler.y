@@ -83,7 +83,7 @@ Statement:
     ID ASSIGN Expr
     |   LBRACE StatementAux RBRACE
     |   IF Expr LBRACE StatementAux RBRACE
-    |   IF Expr LBRACE StatementAux ELSE LBRACE StatementAux RBRACE
+    |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE
     |   FOR LBRACE StatementAux RBRACE
     |   FOR Expr LBRACE StatementAux RBRACE
     |   RETURN
