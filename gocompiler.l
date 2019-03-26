@@ -80,18 +80,18 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {START_COMMENT} {BEGIN COMMENTS; c_atual=coluna; l_atual=linha;COLUNA;}
 <COMMENTS>("\n") {LINHA;}
 <COMMENTS>(.) {COLUNA;}
-<COMMENTS><<EOF>> {BEGIN 0; printf("Line %d, column %d: unterminated comment\n", l_atual, c_atual);COLUNA;}
+<COMMENTS><<EOF>> {BEGIN 0; printf("Line %d, column %d: unterminated comment\n", l_atual, c_atual);COLUNA;yyterminate();}
 <COMMENTS>{END_COMMENT} {BEGIN 0;COLUNA;}
 
 "\""    {BEGIN STRLIT_STATE;ste_line = linha; ste_column = coluna;COLUNA;}
 <STRLIT_STATE>{ESCAPE}  {COLUNA;}
 <STRLIT_STATE>{INVALID}  {printf("Line %d, column %d: invalid escape sequence (%s)\n", linha, coluna, yytext);COLUNA;}
-<STRLIT_STATE><<EOF>>  {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);COLUNA;}
+<STRLIT_STATE><<EOF>>  {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);COLUNA;yyterminate();}
 <STRLIT_STATE>{LINETERMINATOR} {BEGIN 0;printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);LINHA;}
 <STRLIT_STATE>"\"" {BEGIN 0; COLUNA;}
 <STRLIT_STATE>.  {COLUNA;}
 
-
+<<EOF>>                 {COLUNA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;return SEMICOLON;}yyterminate();}
 {SEMICOLON} {if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA; return SEMICOLON;}
 {BLANKID} {if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA; return BLANKID;}
 {PACKAGE} {if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA; return PACKAGE;}

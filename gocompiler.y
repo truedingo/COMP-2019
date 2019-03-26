@@ -19,7 +19,7 @@
 %left   PLUS MINUS
 %left   STAR DIV MOD
 %right NOT
-%left RPAR LPAR
+%left RPAR LPAR LSQ RSQ
 
 %nonassoc   ELSE IF
 //%token Program Declarations VarDeclaration VarSpec Type FuncDeclaration Parameters FuncBody VarsAndStatements Statement ParseArgs FuncInvocation Expr  
