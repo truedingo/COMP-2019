@@ -7,6 +7,7 @@
     void yyerror (const char *s);
     node* auxNode;
     node* auxNode2;
+    node* start_node;
     int error_check=0;
 %}
 
@@ -36,7 +37,7 @@
 
 %%
 Program: 
-    PACKAGE ID SEMICOLON Declarations           {$$=create_node("Program", NULL); add_child($$, $4);}
+    PACKAGE ID SEMICOLON Declarations           {start_node = create_node("Program", NULL); add_child(start_node,$4);}
     ;
 
 Declarations:  /* empty */                      {$$=NULL;}
