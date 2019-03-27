@@ -82,22 +82,22 @@ FuncBody:
     ;
 
 VarsAndStatements: /* empty */                      {$$=NULL;} 
-    |   VarsAndStatements   SEMICOLON               {;} 
-    |   VarsAndStatements VarDeclaration SEMICOLON  {;} 
-    |   VarsAndStatements Statement SEMICOLON       {;} 
+    |   VarsAndStatements   SEMICOLON               {$$=$1;} 
+    |   VarsAndStatements VarDeclaration SEMICOLON  {$$=$1; add_brother($$, $2);} 
+    |   VarsAndStatements Statement SEMICOLON       {$$=$1; add_brother($$, $2);} 
     ;
 
 Statement:
-    ID ASSIGN Expr                                                              {;} 
-    |   LBRACE StatementAux RBRACE                                              {;} 
-    |   IF Expr LBRACE StatementAux RBRACE                                      {;} 
-    |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE      {;} 
-    |   FOR LBRACE StatementAux RBRACE                                          {;} 
-    |   FOR Expr LBRACE StatementAux RBRACE                                     {;} 
+    ID ASSIGN Expr                                                              {$$=create_node("Block", NULL); add_child($$, $3);} 
+    |   LBRACE StatementAux RBRACE                                              {$$=create_node("Block", NULL); add_child($$, $2);} 
+    |   IF Expr LBRACE StatementAux RBRACE                                      {$$=create_node("Block", NULL); auxNode=create_node("If", NULL); add_child($$, $2); add_brother($2, $4);} 
+    |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE      {$$=create_node("Block", NULL); auxNode=create_node("If", NULL); add_child($$, $2);} 
+    |   FOR LBRACE StatementAux RBRACE                                          {$$=create_node("Block", NULL); add_child($$, $3);} 
+    |   FOR Expr LBRACE StatementAux RBRACE                                     {$$=create_node("Block", NULL); add_child($$, $2); add_brother($2, $4);} 
     |   RETURN                                                                  {;} 
     |   RETURN Expr                                                             {;} 
-    |   FuncInvocation                                                          {;} 
-    |   ParseArgs                                                               {;} 
+    |   FuncInvocation                                                          {$$=$1;} 
+    |   ParseArgs                                                               {$$=create_node("Block", NULL); add_child($$, $1);} 
     |   PRINT LPAR Expr RPAR                                                    {;} 
     |   PRINT LPAR STRLIT RPAR                                                  {;} 
     |   error                                                                   {;} 

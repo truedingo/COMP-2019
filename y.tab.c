@@ -1690,47 +1690,47 @@ yyreduce:
 
   case 24:
 #line 85 "gocompiler.y"
-    {;}
+    {(yyval.node)=(yyvsp[(1) - (2)].node);}
     break;
 
   case 25:
 #line 86 "gocompiler.y"
-    {;}
+    {(yyval.node)=(yyvsp[(1) - (3)].node); add_brother((yyval.node), (yyvsp[(2) - (3)].node));}
     break;
 
   case 26:
 #line 87 "gocompiler.y"
-    {;}
+    {(yyval.node)=(yyvsp[(1) - (3)].node); add_brother((yyval.node), (yyvsp[(2) - (3)].node));}
     break;
 
   case 27:
 #line 91 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); add_child((yyval.node), (yyvsp[(3) - (3)].node));}
     break;
 
   case 28:
 #line 92 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); add_child((yyval.node), (yyvsp[(2) - (3)].node));}
     break;
 
   case 29:
 #line 93 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); auxNode=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); add_brother((yyvsp[(2) - (5)].node), (yyvsp[(4) - (5)].node));}
     break;
 
   case 30:
 #line 94 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); auxNode=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (9)].node));}
     break;
 
   case 31:
 #line 95 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); add_child((yyval.node), (yyvsp[(3) - (4)].node));}
     break;
 
   case 32:
 #line 96 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); add_brother((yyvsp[(2) - (5)].node), (yyvsp[(4) - (5)].node));}
     break;
 
   case 33:
@@ -1745,12 +1745,12 @@ yyreduce:
 
   case 35:
 #line 99 "gocompiler.y"
-    {;}
+    {(yyval.node)=(yyvsp[(1) - (1)].node);}
     break;
 
   case 36:
 #line 100 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Block", NULL); add_child((yyval.node), (yyvsp[(1) - (1)].node));}
     break;
 
   case 37:
@@ -1790,12 +1790,12 @@ yyreduce:
 
   case 44:
 #line 116 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Call", NULL);auxNode=create_node("Id",(yyvsp[(1) - (3)].string)); add_child((yyval.node),auxNode);}
     break;
 
   case 45:
 #line 117 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Call", NULL); auxNode=create_node("Id",(yyvsp[(1) - (5)].string)); add_child((yyval.node),auxNode);add_brother(auxNode,(yyvsp[(3) - (5)].node));}
     break;
 
   case 46:
