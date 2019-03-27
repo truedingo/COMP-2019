@@ -51,43 +51,43 @@ VarDeclaration:
     ;
 
 VarSpec:
-    ID CommaAux Type                            {$$=create_node("VarDecl", $1); add_child($$, $3);add_brother($$, $2);} 
+    ID CommaAux Type                            {$$=create_node("VarDecl", NULL); add_brother($$, $2); add_child($$, $3); add_brother($3, create_node("Id", $1)); } 
     ;
 
 CommaAux: /* empty */                           {$$=NULL;}
-     |  COMMA ID CommaAux                       {$$=create_node("VarDecl", $2); add_brother($$, $3);}   
+     |  COMMA ID CommaAux                       {$$=create_node("VarDecl", NULL); add_brother($$, $3); add_child($$, create_node("Id", $2));}   
     ;
 
 Type:
-    INT                                         {$$=create_node("INT", NULL);}
-    |   FLOAT32                                 {$$=create_node("FLOAT32", NULL);}
-    |   BOOL                                    {$$=create_node("BOOL", NULL);}
-    |   STRING                                  {$$=create_node("STRING", NULL);}
+    INT                                         {$$=create_node("Int", NULL);}
+    |   FLOAT32                                 {$$=create_node("Float32", NULL);}
+    |   BOOL                                    {$$=create_node("Bool", NULL);}
+    |   STRING                                  {$$=create_node("String", NULL);}
     ;
 
 FuncDeclaration:
-    FUNC ID LPAR RPAR FuncBody                      {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $5);}
-    |   FUNC ID LPAR Parameters RPAR FuncBody       {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $6); add_child(auxNode, $4);}
-    |   FUNC ID LPAR RPAR Type FuncBody             {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $6); add_child(auxNode, $5);}
-    |   FUNC ID LPAR Parameters RPAR Type FuncBody  {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $7); add_child(auxNode, $6); add_child(auxNode, $4);}
+    FUNC ID LPAR RPAR FuncBody                      {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $5); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, create_node("FuncParams", NULL));}
+    |   FUNC ID LPAR Parameters RPAR FuncBody       {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $4);}
+    |   FUNC ID LPAR RPAR Type FuncBody             {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $5);}
+    |   FUNC ID LPAR Parameters RPAR Type FuncBody  {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $7); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $6); add_brother($6, $4);}
     ;
 
 Parameters:
-    ID Type ParamAux                                {$$=create_node("FuncParams", $1); add_child($$, $3);}
+    ID Type ParamAux                                {$$=create_node("FuncParams", NULL); auxNode = create_node("ParamDecl", NULL); add_child($$, auxNode); add_child(auxNode, $2); add_brother($2, create_node("Id", $1)); add_brother(auxNode, $3);}
     ;
 
 ParamAux: /* empty */                               {$$=NULL;} 
-    |   COMMA ID Type ParamAux                      {$$=create_node("ParamDecl", $2); add_child($$, $3);}
+    |   COMMA ID Type ParamAux                      {$$=create_node("ParamDecl", NULL); add_child($$, $3); add_brother($3, create_node("Id", $2));}
     ;
 
 FuncBody:
-    LBRACE VarsAndStatements RBRACE                 {$$=create_node("FuncBody",NULL); add_child($$, $2);}
+    LBRACE VarsAndStatements RBRACE                 {$$=create_node("FuncBody", NULL); add_child($$, $2);}
     ;
 
-VarsAndStatements: /* empty */                      {$$=NULL;} 
-    |   VarsAndStatements   SEMICOLON               {$$=$1;} 
-    |   VarsAndStatements VarDeclaration SEMICOLON  {$$=$1; add_brother($$, $2);} 
-    |   VarsAndStatements Statement SEMICOLON       {$$=$1; add_brother($$, $2);} 
+VarsAndStatements: /* empty */                      {$$=NULL;}
+    |   VarsAndStatements SEMICOLON                 {$$=$1;}
+    |   VarsAndStatements VarDeclaration SEMICOLON  {if($1 == NULL){$$ = $2;}else{ $$ = $1; add_brother($$, $2);}} 
+    |   VarsAndStatements Statement SEMICOLON       {if($1 == NULL){$$ = $2;}else{ $$ = $1; add_brother($$, $2);}} 
     ;
 
 Statement:

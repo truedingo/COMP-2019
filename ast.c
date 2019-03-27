@@ -8,12 +8,13 @@ node *create_node(char *name, char *value){
 
     n->name = (char *)strdup(name);
 
-    if(n->value == NULL){
-        n->value = NULL;
-    }
-    else{
+    if(value != NULL){
         n->value = (char *)strdup(value);
     }
+    else{
+        n->value = NULL;
+    }
+    
     n->brother = NULL;
     n->child = NULL;
 
@@ -57,7 +58,7 @@ void printAST(node *current, int n){
         for(i=0;i<n;i++){
             printf("..");
         }
-
+        
         if(current->value != NULL){
             printf("%s(%s)\n",current->name, current->value);
         }

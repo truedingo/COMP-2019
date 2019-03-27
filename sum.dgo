@@ -1,0 +1,15 @@
+package main
+
+/*
+import (
+    "fmt"
+    "strconv"
+    "os"
+)
+*/
+
+// adaptado https://tour.golang.org/flowcontrol/3
+func main() {
+	// sum integers from 1 to n
+	var i, n, sum int;
+}
