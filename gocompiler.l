@@ -5,6 +5,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "y.tab.h"
+    #include "ast.h"
     #define LINHA linha++; coluna=1;
     #define COLUNA coluna+=yyleng;
     int flag_semicolon=0;
