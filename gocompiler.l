@@ -156,7 +156,7 @@ int main(int argc, char* argv[]){
         if(strcmp(argv[1], "-t") == 0){
             flag=-2;
             yyparse();
-            if(prod_error!=0){
+            if(prod_error==0){
                 printAST(start_node, 0);
             }
         }
