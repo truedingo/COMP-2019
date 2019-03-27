@@ -16,7 +16,6 @@ node *create_node(char *name, char *value){
     }
     n->brother = NULL;
     n->child = NULL;
-    n->n_childs = 0;
 
     return n;
 }
@@ -27,7 +26,6 @@ void add_child(node *dad, node * child){
     }
     else{
         dad->child = child;
-        dad->n_childs = dad->n_childs + 1;
     }
 }
 
@@ -41,19 +39,6 @@ void add_brother(node *aux_brother, node *new_brother){
         aux = aux->brother;
     }
     aux->brother = new_brother;
-}
-
-int count_brothers(node *root)
-{
-    int n_brothers = 0;
-    node *aux;
-    aux = root;
-    while (aux != NULL)
-    {
-        aux = aux->brother;
-        n_brothers++;
-    }
-    return n_brothers;
 }
 
 void printAST(node *current, int n){
