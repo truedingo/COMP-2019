@@ -1912,17 +1912,17 @@ yyreduce:
 
   case 68:
 #line 147 "gocompiler.y"
-    {;}
+    {(yyval.node)=(yyvsp[(1) - (1)].node);}
     break;
 
   case 69:
 #line 148 "gocompiler.y"
-    {;}
+    {(yyval.node)=(yyvsp[(2) - (3)].node);}
     break;
 
   case 70:
 #line 149 "gocompiler.y"
-    {;}
+    {(yyval.node)=create_node("Error", NULL); error_check=1;}
     break;
 
 

@@ -144,9 +144,9 @@ Expr:
     |   INTLIT                      {$$ = create_node("IntLit", $1);}                  
     |   REALLIT                     {$$ = create_node("RealLit", $1);}  
     |   ID                          {$$ = create_node("Id", $1);}  
-    |   FuncInvocation              {;} 
-    |   LPAR Expr RPAR              {;} 
-    |   LPAR error RPAR             {;} 
+    |   FuncInvocation              {$$=$1;} 
+    |   LPAR Expr RPAR              {$$=$2;} 
+    |   LPAR error RPAR             {$$=create_node("Error", NULL); error_check=1;} 
     ; 
 %% 
 
