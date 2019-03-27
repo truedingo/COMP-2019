@@ -81,7 +81,7 @@ FuncBody:
     LBRACE VarsAndStatements RBRACE                 {$$=create_node("FuncBody",NULL); add_child($$, $2);}
     ;
 
-VarsAndStatements: /* empty */                      {;} 
+VarsAndStatements: /* empty */                      {$$=NULL;} 
     |   VarsAndStatements   SEMICOLON               {;} 
     |   VarsAndStatements VarDeclaration SEMICOLON  {;} 
     |   VarsAndStatements Statement SEMICOLON       {;} 
@@ -103,7 +103,7 @@ Statement:
     |   error                                                                   {;} 
     ;
 
-StatementAux: /* empty */                                                       {;} 
+StatementAux: /* empty */                                                       {$$=NULL;} 
     |   Statement SEMICOLON StatementAux                                        {;} 
     ;
 
@@ -113,38 +113,38 @@ ParseArgs:
     ;
 
 FuncInvocation:
-    ID LPAR RPAR                                                                {;} 
-    |   ID LPAR Expr ExprAux RPAR                                               {;} 
+    ID LPAR RPAR                                                                {$$=create_node("Call", NULL);auxNode=create_node("Id",$1); add_child($$,auxNode);} 
+    |   ID LPAR Expr ExprAux RPAR                                               {$$=create_node("Call", NULL); auxNode=create_node("Id",$1); add_child($$,auxNode);add_brother(auxNode,$3);} 
     |   ID LPAR error RPAR                                                      {;} 
     ;
 
-ExprAux: /* empty */                                                            {;} 
-    | COMMA Expr ExprAux                                                        {;} 
+ExprAux: /* empty */                                                            {$$=NULL;}
+    | COMMA Expr ExprAux                                                        {$$ = create_node("Comma", NULL); add_brother($3,$2); add_child($$,$3);} 
     ;
 
-Expr:{;} 
-    Expr OR Expr                                                                {;} 
-    |   Expr AND Expr   {;} 
-    |   Expr LT Expr    {;} 
-    |   Expr GT Expr    {;} 
-    |   Expr EQ Expr    {;} 
-    |   Expr NE Expr    {;} 
-    |   Expr LE Expr    {;} 
-    |   Expr GE Expr    {;} 
-    |   Expr PLUS Expr  {;} 
-    |   Expr MINUS Expr {;} 
-    |   Expr STAR Expr  {;} 
-    |   Expr DIV Expr   {;} 
-    |   Expr MOD Expr   {;} 
-    |   NOT Expr        {;} 
-    |   MINUS Expr      {;} 
-    |   PLUS Expr       {;} 
-    |   INTLIT          {;} 
-    |   REALLIT         {;} 
-    |   ID              {;} 
-    |   FuncInvocation  {;} 
-    |   LPAR Expr RPAR  {;} 
-    |   LPAR error RPAR {;} 
-    ;
+Expr:
+    Expr OR Expr                    {$$ = create_node("Or", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr AND Expr               {$$ = create_node("And", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr LT Expr                {$$ = create_node("Lt", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr GT Expr                {$$ = create_node("Gt", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr EQ Expr                {$$ = create_node("Eq", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr NE Expr                {$$ = create_node("Ne", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr LE Expr                {$$ = create_node("Le", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr GE Expr                {$$ = create_node("Ge", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr PLUS Expr              {$$ = create_node("Add", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr MINUS Expr             {$$ = create_node("Sub", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr STAR Expr              {$$ = create_node("Mul", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr DIV Expr               {$$ = create_node("Div", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   Expr MOD Expr               {$$ = create_node("Mod", NULL); add_child($$,$1); add_brother($1,$3);}
+    |   NOT Expr                    {$$ = create_node("Not", NULL); add_child($$,$2);}
+    |   MINUS Expr %prec NOT        {$$ = create_node("Minus", NULL); add_child($$,$2);}
+    |   PLUS Expr  %prec NOT        {$$ = create_node("Plus", NULL); add_child($$,$2);}
+    |   INTLIT                      {$$ = create_node("IntLit", $1);}                  
+    |   REALLIT                     {$$ = create_node("RealLit", $1);}  
+    |   ID                          {$$ = create_node("Id", $1);}  
+    |   FuncInvocation              {;} 
+    |   LPAR Expr RPAR              {;} 
+    |   LPAR error RPAR             {;} 
+    ; 
 %% 
 
