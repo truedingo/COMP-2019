@@ -7,7 +7,8 @@
     void yyerror (const char *s);
     node* auxNode;
     node* auxNode2;
-    int error_check=0;
+    node* start_node;
+    int prod_error=0;
 %}
 
 
@@ -102,7 +103,7 @@ Statement:
     |   ParseArgs                                                               {$$=$1;} 
     |   PRINT LPAR Expr RPAR                                                    {$$=create_node("Print", NULL); add_child($$, $3);} 
     |   PRINT LPAR STRLIT RPAR                                                  {$$=create_node("Print", NULL); auxNode = create_node("Strlit", $3);} 
-    |   error                                                                   {error_check=1; $$=create_node("Error", NULL);} 
+    |   error                                                                   {prod_error=1; $$=create_node("Error", NULL);} 
     ;
 
 StatementAux: /* empty */                                                       {$$=NULL;} 
@@ -117,7 +118,7 @@ ParseArgs:
 FuncInvocation:
     ID LPAR RPAR                                                                {$$=create_node("Call", NULL);auxNode=create_node("Id",$1); add_child($$,auxNode);} 
     |   ID LPAR Expr ExprAux RPAR                                               {$$=create_node("Call", NULL); auxNode=create_node("Id",$1); add_child($$,auxNode);add_brother(auxNode,$3);} 
-    |   ID LPAR error RPAR                                                      {$$=create_node("Call", NULL); auxNode=create_node("Id", $1); add_child($$, auxNode); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2); error_check=1;} 
+    |   ID LPAR error RPAR                                                      {$$=create_node("Call", NULL); auxNode=create_node("Id", $1); add_child($$, auxNode); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2); prod_error=1;} 
     ;
 
 ExprAux: /* empty */                                                            {$$=NULL;}
@@ -146,7 +147,7 @@ Expr:
     |   ID                          {$$ = create_node("Id", $1);}  
     |   FuncInvocation              {$$=$1;} 
     |   LPAR Expr RPAR              {$$=$2;} 
-    |   LPAR error RPAR             {$$=create_node("Error", NULL); error_check=1;} 
+    |   LPAR error RPAR             {$$=create_node("Error", NULL); prod_error=1;} 
     ; 
 %% 
 
