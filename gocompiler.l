@@ -136,11 +136,11 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {PARSEINT} {if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return PARSEINT;}
 {FUNC} {if(flag==-1 ){printf("FUNC\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return FUNC;}
 {CMDARGS} {if(flag==-1 ){printf("CMDARGS\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return CMDARGS;}
-{REALLIT} {if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;if(flag==-2) return REALLIT;}
-{RESERVED} {if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA;if(flag==-2) return RESERVED;}
-{ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;if(flag==-2) return ID;}
-{INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA;if(flag==-2) return INTLIT;}
-{STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA;if(flag==-2) return STRLIT;}
+{REALLIT} {if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return REALLIT;}
+{RESERVED} {if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return RESERVED;}
+{ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return ID;}
+{INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return INTLIT;}
+{STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return STRLIT;}
 {LINETERMINATOR} {LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
 "\t"|" "    {COLUNA;}
 
