@@ -7,6 +7,7 @@
     void yyerror (const char *s);
     node* auxNode;
     node* auxNode2;
+    node* auxNode3;
     node* start_node;
     int prod_error=0;
 %}
@@ -24,13 +25,11 @@
 %left   COMMA
 %right  ASSIGN
 %left   OR
-%left   AND
-%left   EQ NE
-%left   LT GT LE GE
+%left   AND  
+%left   LT GT LE GE  EQ NE
 %left   PLUS MINUS
 %left   STAR DIV MOD
 %right NOT
-%left RPAR LPAR LSQ RSQ
 
 %nonassoc   ELSE IF
 %type <node> Program Declarations VarDeclaration FuncDeclaration VarSpec CommaAux Type Parameters ParamAux FuncBody VarsAndStatements Statement Expr StatementAux FuncInvocation ParseArgs ExprAux
@@ -55,7 +54,7 @@ VarSpec:
     ;
 
 CommaAux: /* empty */                           {$$=NULL;}
-     |  COMMA ID CommaAux                       {$$=create_node("VarDecl", NULL); add_brother($$, $3); add_child($$, create_node("Id", $2));}   
+    |  COMMA ID CommaAux                       {$$=create_node("VarDecl", NULL); add_brother($$, $3); add_child($$, create_node("Id", $2));}   
     ;
 
 Type:
@@ -68,7 +67,7 @@ Type:
 FuncDeclaration:
     FUNC ID LPAR RPAR FuncBody                      {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $5); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, create_node("FuncParams", NULL));}
     |   FUNC ID LPAR Parameters RPAR FuncBody       {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $4);}
-    |   FUNC ID LPAR RPAR Type FuncBody             {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $5);}
+    |   FUNC ID LPAR RPAR Type FuncBody             {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $5); auxNode3 = create_node("FuncParams", NULL); add_brother($5,auxNode3);}
     |   FUNC ID LPAR Parameters RPAR Type FuncBody  {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $7); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $6); add_brother($6, $4);}
     ;
 
@@ -77,7 +76,7 @@ Parameters:
     ;
 
 ParamAux: /* empty */                               {$$=NULL;} 
-    |   COMMA ID Type ParamAux                      {$$=create_node("ParamDecl", NULL); add_child($$, $3); add_brother($3, create_node("Id", $2));}
+    |   COMMA ID Type ParamAux                      {$$=create_node("ParamDecl", NULL); add_child($$, $3); auxNode = create_node("Id", $2); add_brother($3, auxNode); add_brother($$, $4);}
     ;
 
 FuncBody:
@@ -92,7 +91,7 @@ VarsAndStatements: /* empty */                      {$$=NULL;}
 
 Statement:
     ID ASSIGN Expr                                                              {$$=create_node("Assign", NULL); auxNode = create_node("Id", $1); add_child($$, auxNode); add_brother(auxNode, $3);} 
-    |   LBRACE StatementAux RBRACE                                              {$$=$2;} 
+    |   LBRACE StatementAux RBRACE                                              {if(count_brothers($2)>1){$$ = create_node("Block", NULL);add_child($$, $2);} else{$$ = $2;}} 
     |   IF Expr LBRACE StatementAux RBRACE                                      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2);} 
     |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2); add_child(auxNode2, $8);} 
     |   FOR LBRACE StatementAux RBRACE                                          {$$=create_node("For", NULL); auxNode = create_node("Block", NULL); add_child($$, auxNode); add_child(auxNode, $3);} 

@@ -54,6 +54,19 @@ void check_brothers(node *aux, char *val){
     }
 }
 
+int count_brothers(node *start_node)
+{
+    int n = 0;
+    node *aux;
+    aux = start_node;
+    while (aux != NULL)
+    {
+        aux = aux->brother;
+        n++;
+    }
+    return n;
+}
+
 void printAST(node *current, int n){
     int i;
 
