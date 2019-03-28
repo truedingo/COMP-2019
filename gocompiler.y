@@ -111,7 +111,7 @@ StatementAux: /* empty */                                                       
 
 ParseArgs:
     ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR             {$$=create_node("ParseArgs", NULL); auxNode = create_node("Id", $1); add_child($$, auxNode); add_brother(auxNode, $9);} 
-    | ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR                          {$$=create_node("ParseArgs", NULL); auxNode = create_node("Id", $1); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2);} 
+    | ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR                          {$$=create_node("ParseArgs", NULL); auxNode = create_node("Id", $1); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2); prod_error=1;} 
     ;
 
 FuncInvocation:

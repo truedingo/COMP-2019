@@ -14,6 +14,8 @@
     int coluna=1;
     int c_atual=1;
     int l_atual=1;
+    int colunaAux;
+    int linhaAux;
     //string errors
     int ste_line;
     int ste_column;
@@ -141,7 +143,7 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return ID;}
 {INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return INTLIT;}
 {STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return STRLIT;}
-{LINETERMINATOR} {LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
+{LINETERMINATOR} {linhaAux = linha; colunaAux = coluna; LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
 "\t"|" "    {COLUNA;}
 
 .       {printf("Line %d, column %d: illegal character (%s)\n", linha, coluna, yytext); flag_semicolon = 0; COLUNA;} 
@@ -173,5 +175,10 @@ return 1;
 }
 
 void yyerror (const char *s) { 
-     printf ("Line %d, column %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
+    if(strcmp("\0", s) == 0){
+        printf ("Line %d, column %d: %s: %s\n",linhaAux,colunaAux, s, yytext);
+    }
+    else{
+        printf ("Line %d, column %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
+    }
 }
