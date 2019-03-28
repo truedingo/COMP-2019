@@ -51,7 +51,7 @@ VarDeclaration:
     ;
 
 VarSpec:
-    ID CommaAux Type                            {$$=create_node("VarDecl", NULL); add_brother($$, $2); add_child($$, $3); add_brother($3, create_node("Id", $1)); } 
+    ID CommaAux Type                            {$$=create_node("VarDecl", NULL); add_brother($$, $2); add_child($$, $3); add_brother($3, create_node("Id", $1)); check_brothers($$, $3->name);} 
     ;
 
 CommaAux: /* empty */                           {$$=NULL;}
@@ -91,18 +91,18 @@ VarsAndStatements: /* empty */                      {$$=NULL;}
     ;
 
 Statement:
-    ID ASSIGN Expr                                                              {$$=create_node("Assign", $1); add_child($$, $3);} 
+    ID ASSIGN Expr                                                              {$$=create_node("Assign", NULL); auxNode = create_node("Id", $1); add_child($$, auxNode); add_brother(auxNode, $3);} 
     |   LBRACE StatementAux RBRACE                                              {$$=$2;} 
-    |   IF Expr LBRACE StatementAux RBRACE                                      {$$=create_node("If", NULL); add_child($$, $2); add_brother($2, $4);} 
-    |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE      {$$=create_node("If", NULL); add_child($$, $4); add_brother($4, $8);} 
-    |   FOR LBRACE StatementAux RBRACE                                          {$$=create_node("For", NULL); add_child($$, $3);} 
-    |   FOR Expr LBRACE StatementAux RBRACE                                     {$$=create_node("For", NULL); add_child($$, $2); add_brother($2, $4);} 
+    |   IF Expr LBRACE StatementAux RBRACE                                      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4);} 
+    |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2); add_child(auxNode2, $8);} 
+    |   FOR LBRACE StatementAux RBRACE                                          {$$=create_node("For", NULL); auxNode = create_node("Block", NULL); add_child($$, auxNode); add_child(auxNode, $3);} 
+    |   FOR Expr LBRACE StatementAux RBRACE                                     {$$=create_node("For", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4);} 
     |   RETURN                                                                  {$$=create_node("Return", NULL);} 
     |   RETURN Expr                                                             {$$=create_node("Return", NULL); add_child($$, $2);} 
     |   FuncInvocation                                                          {$$=$1;} 
     |   ParseArgs                                                               {$$=$1;} 
     |   PRINT LPAR Expr RPAR                                                    {$$=create_node("Print", NULL); add_child($$, $3);} 
-    |   PRINT LPAR STRLIT RPAR                                                  {$$=create_node("Print", NULL); auxNode = create_node("Strlit", $3);} 
+    |   PRINT LPAR STRLIT RPAR                                                  {$$=create_node("Print", NULL); auxNode = create_node("StrLit", $3); add_child($$, auxNode);} 
     |   error                                                                   {prod_error=1; $$=create_node("Error", NULL);} 
     ;
 
@@ -111,8 +111,8 @@ StatementAux: /* empty */                                                       
     ;
 
 ParseArgs:
-    ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR             {$$=create_node("ParseArgs", NULL); auxNode= create_node("Id", $1); add_child($$, auxNode); add_brother(auxNode,$9);} 
-    | ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR                          {$$=create_node("ParseArgs", NULL); auxNode=create_node("Id", $1); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2);} 
+    ID COMMA BLANKID ASSIGN PARSEINT LPAR CMDARGS LSQ Expr RSQ RPAR             {$$=create_node("ParseArgs", NULL); auxNode = create_node("Id", $1); add_child($$, auxNode); add_brother(auxNode, $9);} 
+    | ID COMMA BLANKID ASSIGN PARSEINT LPAR error RPAR                          {$$=create_node("ParseArgs", NULL); auxNode = create_node("Id", $1); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2);} 
     ;
 
 FuncInvocation:

@@ -1613,7 +1613,7 @@ yyreduce:
 
   case 8:
 #line 54 "gocompiler.y"
-    {(yyval.node)=create_node("VarDecl", NULL); add_brother((yyval.node), (yyvsp[(2) - (3)].node)); add_child((yyval.node), (yyvsp[(3) - (3)].node)); add_brother((yyvsp[(3) - (3)].node), create_node("Id", (yyvsp[(1) - (3)].string)));}
+    {(yyval.node)=create_node("VarDecl", NULL); add_brother((yyval.node), (yyvsp[(2) - (3)].node)); add_child((yyval.node), (yyvsp[(3) - (3)].node)); add_brother((yyvsp[(3) - (3)].node), create_node("Id", (yyvsp[(1) - (3)].string))); check_brothers((yyval.node), (yyvsp[(3) - (3)].node)->name);}
     break;
 
   case 9:
@@ -1698,7 +1698,7 @@ yyreduce:
 
   case 25:
 #line 89 "gocompiler.y"
-    {if((yyvsp[(1) - (3)].node) == NULL){(yyval.node) = (yyvsp[(2) - (3)].node);}else{ (yyval.node) = (yyvsp[(1) - (3)].node); add_brother((yyval.node), (yyvsp[(2) - (3)].node)); printf("Here1\n");}}
+    {if((yyvsp[(1) - (3)].node) == NULL){(yyval.node) = (yyvsp[(2) - (3)].node);}else{ (yyval.node) = (yyvsp[(1) - (3)].node); add_brother((yyval.node), (yyvsp[(2) - (3)].node));}}
     break;
 
   case 26:
@@ -1708,7 +1708,7 @@ yyreduce:
 
   case 27:
 #line 94 "gocompiler.y"
-    {(yyval.node)=create_node("Assign", (yyvsp[(1) - (3)].string)); add_child((yyval.node), (yyvsp[(3) - (3)].node));}
+    {(yyval.node)=create_node("Assign", NULL); auxNode = create_node("Id", (yyvsp[(1) - (3)].string)); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(3) - (3)].node));}
     break;
 
   case 28:
@@ -1718,22 +1718,22 @@ yyreduce:
 
   case 29:
 #line 96 "gocompiler.y"
-    {(yyval.node)=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); add_brother((yyvsp[(2) - (5)].node), (yyvsp[(4) - (5)].node));}
+    {(yyval.node)=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); auxNode = create_node("Block", NULL); add_brother((yyvsp[(2) - (5)].node), auxNode); add_child(auxNode, (yyvsp[(4) - (5)].node));}
     break;
 
   case 30:
 #line 97 "gocompiler.y"
-    {(yyval.node)=create_node("If", NULL); add_child((yyval.node), (yyvsp[(4) - (9)].node)); add_brother((yyvsp[(4) - (9)].node), (yyvsp[(8) - (9)].node));}
+    {(yyval.node)=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (9)].node)); auxNode = create_node("Block", NULL); add_brother((yyvsp[(2) - (9)].node), auxNode); add_child(auxNode, (yyvsp[(4) - (9)].node)); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2); add_child(auxNode2, (yyvsp[(8) - (9)].node));}
     break;
 
   case 31:
 #line 98 "gocompiler.y"
-    {(yyval.node)=create_node("For", NULL); add_child((yyval.node), (yyvsp[(3) - (4)].node));}
+    {(yyval.node)=create_node("For", NULL); auxNode = create_node("Block", NULL); add_child((yyval.node), auxNode); add_child(auxNode, (yyvsp[(3) - (4)].node));}
     break;
 
   case 32:
 #line 99 "gocompiler.y"
-    {(yyval.node)=create_node("For", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); add_brother((yyvsp[(2) - (5)].node), (yyvsp[(4) - (5)].node));}
+    {(yyval.node)=create_node("For", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); auxNode = create_node("Block", NULL); add_brother((yyvsp[(2) - (5)].node), auxNode); add_child(auxNode, (yyvsp[(4) - (5)].node));}
     break;
 
   case 33:
@@ -1763,7 +1763,7 @@ yyreduce:
 
   case 38:
 #line 105 "gocompiler.y"
-    {(yyval.node)=create_node("Print", NULL); auxNode = create_node("Strlit", (yyvsp[(3) - (4)].string));}
+    {(yyval.node)=create_node("Print", NULL); auxNode = create_node("StrLit", (yyvsp[(3) - (4)].string)); add_child((yyval.node), auxNode);}
     break;
 
   case 39:
@@ -1783,12 +1783,12 @@ yyreduce:
 
   case 42:
 #line 114 "gocompiler.y"
-    {(yyval.node)=create_node("ParseArgs", NULL); auxNode= create_node("Id", (yyvsp[(1) - (11)].string)); add_child((yyval.node), auxNode); add_brother(auxNode,(yyvsp[(9) - (11)].node));}
+    {(yyval.node)=create_node("ParseArgs", NULL); auxNode = create_node("Id", (yyvsp[(1) - (11)].string)); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(9) - (11)].node));}
     break;
 
   case 43:
 #line 115 "gocompiler.y"
-    {(yyval.node)=create_node("ParseArgs", NULL); auxNode=create_node("Id", (yyvsp[(1) - (8)].string)); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2);}
+    {(yyval.node)=create_node("ParseArgs", NULL); auxNode = create_node("Id", (yyvsp[(1) - (8)].string)); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2);}
     break;
 
   case 44:
