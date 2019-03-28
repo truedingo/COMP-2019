@@ -1653,17 +1653,17 @@ yyreduce:
 
   case 16:
 #line 70 "gocompiler.y"
-    {(yyval.node)=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", (yyvsp[(2) - (6)].string)); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(6) - (6)].node)); auxNode2 = create_node("Id", (yyvsp[(2) - (6)].string)); add_child(auxNode, auxNode2); add_brother(auxNode2, (yyvsp[(4) - (6)].node));}
+    {(yyval.node)=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(6) - (6)].node)); auxNode2 = create_node("Id", (yyvsp[(2) - (6)].string)); add_child(auxNode, auxNode2); add_brother(auxNode2, (yyvsp[(4) - (6)].node));}
     break;
 
   case 17:
 #line 71 "gocompiler.y"
-    {(yyval.node)=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", (yyvsp[(2) - (6)].string)); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(6) - (6)].node)); auxNode2 = create_node("Id", (yyvsp[(2) - (6)].string)); add_child(auxNode, auxNode2); add_brother(auxNode2, (yyvsp[(5) - (6)].node));}
+    {(yyval.node)=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(6) - (6)].node)); auxNode2 = create_node("Id", (yyvsp[(2) - (6)].string)); add_child(auxNode, auxNode2); add_brother(auxNode2, (yyvsp[(5) - (6)].node));}
     break;
 
   case 18:
 #line 72 "gocompiler.y"
-    {(yyval.node)=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", (yyvsp[(2) - (7)].string)); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(7) - (7)].node)); auxNode2 = create_node("Id", (yyvsp[(2) - (7)].string)); add_child(auxNode, auxNode2); add_brother(auxNode2, (yyvsp[(6) - (7)].node)); add_brother((yyvsp[(6) - (7)].node), (yyvsp[(4) - (7)].node));}
+    {(yyval.node)=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child((yyval.node), auxNode); add_brother(auxNode, (yyvsp[(7) - (7)].node)); auxNode2 = create_node("Id", (yyvsp[(2) - (7)].string)); add_child(auxNode, auxNode2); add_brother(auxNode2, (yyvsp[(6) - (7)].node)); add_brother((yyvsp[(6) - (7)].node), (yyvsp[(4) - (7)].node));}
     break;
 
   case 19:
@@ -1718,7 +1718,7 @@ yyreduce:
 
   case 29:
 #line 96 "gocompiler.y"
-    {(yyval.node)=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); auxNode = create_node("Block", NULL); add_brother((yyvsp[(2) - (5)].node), auxNode); add_child(auxNode, (yyvsp[(4) - (5)].node));}
+    {(yyval.node)=create_node("If", NULL); add_child((yyval.node), (yyvsp[(2) - (5)].node)); auxNode = create_node("Block", NULL); add_brother((yyvsp[(2) - (5)].node), auxNode); add_child(auxNode, (yyvsp[(4) - (5)].node)); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2);}
     break;
 
   case 30:
@@ -1798,7 +1798,7 @@ yyreduce:
 
   case 45:
 #line 120 "gocompiler.y"
-    {(yyval.node)=create_node("Call", NULL); auxNode=create_node("Id",(yyvsp[(1) - (5)].string)); add_child((yyval.node),auxNode);add_brother(auxNode,(yyvsp[(3) - (5)].node));}
+    {(yyval.node)=create_node("Call", NULL); auxNode=create_node("Id",(yyvsp[(1) - (5)].string)); add_child((yyval.node),auxNode); add_brother(auxNode,(yyvsp[(3) - (5)].node)); add_brother((yyvsp[(3) - (5)].node), (yyvsp[(4) - (5)].node)); }
     break;
 
   case 46:
@@ -1813,7 +1813,7 @@ yyreduce:
 
   case 48:
 #line 125 "gocompiler.y"
-    {(yyval.node) = create_node("Comma", NULL); add_brother((yyvsp[(3) - (3)].node),(yyvsp[(2) - (3)].node)); add_child((yyval.node),(yyvsp[(3) - (3)].node));}
+    {(yyval.node) = (yyvsp[(2) - (3)].node); add_brother((yyvsp[(2) - (3)].node),(yyvsp[(3) - (3)].node));}
     break;
 
   case 49:

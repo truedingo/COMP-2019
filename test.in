@@ -1,0 +1,17 @@
+package main
+
+/*
+import (
+    "fmt"
+    "strconv"
+    "os"
+)
+*/
+
+var i, n, sum int;
+var a, b,c float32;
+
+func main() {
+	var i, n, sum int;
+    var a, b,c float32;
+}

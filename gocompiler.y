@@ -67,9 +67,9 @@ Type:
 
 FuncDeclaration:
     FUNC ID LPAR RPAR FuncBody                      {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $5); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, create_node("FuncParams", NULL));}
-    |   FUNC ID LPAR Parameters RPAR FuncBody       {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $4);}
-    |   FUNC ID LPAR RPAR Type FuncBody             {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $5);}
-    |   FUNC ID LPAR Parameters RPAR Type FuncBody  {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", $2); add_child($$, auxNode); add_brother(auxNode, $7); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $6); add_brother($6, $4);}
+    |   FUNC ID LPAR Parameters RPAR FuncBody       {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $4);}
+    |   FUNC ID LPAR RPAR Type FuncBody             {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $6); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $5);}
+    |   FUNC ID LPAR Parameters RPAR Type FuncBody  {$$=create_node("FuncDecl", NULL); auxNode = create_node("FuncHeader", NULL); add_child($$, auxNode); add_brother(auxNode, $7); auxNode2 = create_node("Id", $2); add_child(auxNode, auxNode2); add_brother(auxNode2, $6); add_brother($6, $4);}
     ;
 
 Parameters:
@@ -93,7 +93,7 @@ VarsAndStatements: /* empty */                      {$$=NULL;}
 Statement:
     ID ASSIGN Expr                                                              {$$=create_node("Assign", NULL); auxNode = create_node("Id", $1); add_child($$, auxNode); add_brother(auxNode, $3);} 
     |   LBRACE StatementAux RBRACE                                              {$$=$2;} 
-    |   IF Expr LBRACE StatementAux RBRACE                                      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4);} 
+    |   IF Expr LBRACE StatementAux RBRACE                                      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2);} 
     |   IF Expr LBRACE StatementAux RBRACE ELSE LBRACE StatementAux RBRACE      {$$=create_node("If", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4); auxNode2 = create_node("Block", NULL); add_brother(auxNode, auxNode2); add_child(auxNode2, $8);} 
     |   FOR LBRACE StatementAux RBRACE                                          {$$=create_node("For", NULL); auxNode = create_node("Block", NULL); add_child($$, auxNode); add_child(auxNode, $3);} 
     |   FOR Expr LBRACE StatementAux RBRACE                                     {$$=create_node("For", NULL); add_child($$, $2); auxNode = create_node("Block", NULL); add_brother($2, auxNode); add_child(auxNode, $4);} 
@@ -117,12 +117,12 @@ ParseArgs:
 
 FuncInvocation:
     ID LPAR RPAR                                                                {$$=create_node("Call", NULL);auxNode=create_node("Id",$1); add_child($$,auxNode);} 
-    |   ID LPAR Expr ExprAux RPAR                                               {$$=create_node("Call", NULL); auxNode=create_node("Id",$1); add_child($$,auxNode);add_brother(auxNode,$3);} 
+    |   ID LPAR Expr ExprAux RPAR                                               {$$=create_node("Call", NULL); auxNode=create_node("Id",$1); add_child($$,auxNode); add_brother(auxNode,$3); add_brother($3, $4); } 
     |   ID LPAR error RPAR                                                      {$$=create_node("Call", NULL); auxNode=create_node("Id", $1); add_child($$, auxNode); auxNode2 = create_node("Error", NULL); add_brother(auxNode, auxNode2); prod_error=1;} 
     ;
 
 ExprAux: /* empty */                                                            {$$=NULL;}
-    | COMMA Expr ExprAux                                                        {$$ = create_node("Comma", NULL); add_brother($3,$2); add_child($$,$3);} 
+    | COMMA Expr ExprAux                                                        {$$ = $2; add_brother($2,$3);} 
     ;
 
 Expr:
