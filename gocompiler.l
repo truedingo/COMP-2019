@@ -22,9 +22,8 @@
     int yyparse();
 
 
-    //quatro pontos finais da meta 2
-    int flag_new_line = 0;
-    int flag_activate = 0;
+    //for eof's
+    int new_flag = 0;
 
     //nó root da AST e flag de erro nas produções
     extern  node* start_node;
@@ -93,18 +92,18 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {START_COMMENT} {BEGIN COMMENTS; c_atual=coluna; l_atual=linha;COLUNA;}
 <COMMENTS>("\n") {LINHA;}
 <COMMENTS>(.) {COLUNA;}
-<COMMENTS><<EOF>> {BEGIN 0;if(flag_new_line == 1)flag_activate =1; printf("Line %d, column %d: unterminated comment\n", l_atual, c_atual);COLUNA;yyterminate();}
+<COMMENTS><<EOF>> {BEGIN 0; printf("Line %d, column %d: unterminated comment\n", l_atual, c_atual);COLUNA;yyterminate();}
 <COMMENTS>{END_COMMENT} {BEGIN 0;COLUNA;}
 
 "\""    {BEGIN STRLIT_STATE;ste_line = linha; ste_column = coluna;COLUNA;}
 <STRLIT_STATE>{ESCAPE}  {COLUNA;}
 <STRLIT_STATE>{INVALID}  {printf("Line %d, column %d: invalid escape sequence (%s)\n", linha, coluna, yytext);COLUNA;}
-<STRLIT_STATE><<EOF>>  {BEGIN 0;if(flag_new_line == 1)flag_activate =1; printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);COLUNA;yyterminate();}
-<STRLIT_STATE>{LINETERMINATOR} {BEGIN 0;flag_new_line = 1; printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);LINHA;}
+<STRLIT_STATE><<EOF>>  {BEGIN 0;new_flag =-1; printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);COLUNA;yyterminate();}
+<STRLIT_STATE>{LINETERMINATOR} {BEGIN 0; printf("Line %d, column %d: unterminated string literal\n", ste_line, ste_column);LINHA;}
 <STRLIT_STATE>"\"" {BEGIN 0; COLUNA;}
 <STRLIT_STATE>.  {COLUNA;}
 
-<<EOF>>                 {COLUNA;if(flag_new_line == 1)flag_activate =1;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0; if(flag==-2) return SEMICOLON;}yyterminate();}
+<<EOF>>                 {COLUNA;new_flag =-1;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0; if(flag==-2) return SEMICOLON;}yyterminate();}
 {SEMICOLON} {if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return SEMICOLON;}
 {BLANKID} {if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return BLANKID;}
 {PACKAGE} {if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return PACKAGE;}
@@ -148,7 +147,7 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return ID;}
 {INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return INTLIT;}
 {STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return STRLIT;}
-{LINETERMINATOR} {flag_new_line = 1;linha_aux = linha; coluna_aux = coluna; LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
+{LINETERMINATOR} {linha_aux = linha; coluna_aux = coluna; LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
 "\t"|" "    {COLUNA;}
 
 .       {printf("Line %d, column %d: illegal character (%s)\n", linha, coluna, yytext); flag_semicolon = 0; COLUNA;} 
@@ -180,17 +179,16 @@ return 1;
 }
 
 void yyerror (const char *s) {
-    int aux_break = 0;
+    int l = 0;
+    int c = 0;
 
-    if(flag_activate == 1){
-        if(aux_break != -1)
-            printf ("Line %d, column %d: %s: %s\n",linha_aux,coluna_aux, s, yytext);
-        
-        aux_break = -1;
+    if(new_flag == -1){
+        l = linha_aux;
+        c = coluna_aux;
     }
     else{
-        if(aux_break != -1){
-            printf ("Line %d, column %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
-        }
+        l = linha;
+        c = (int)(coluna-strlen(yytext));  
     }
+    printf ("Line %d, column %d: %s: %s\n",l,c, s, yytext);
 }
