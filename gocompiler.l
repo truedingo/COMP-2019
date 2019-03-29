@@ -14,18 +14,17 @@
     int coluna=1;
     int c_atual=1;
     int l_atual=1;
-    int colunaAux;
-    int linhaAux;
+    int linha_aux;
+    int coluna_aux;
     //string errors
     int ste_line;
     int ste_column;
     int yyparse();
 
+
     //quatro pontos finais da meta 2
     int flag_new_line = 0;
     int flag_activate = 0;
-    int terminate_val = 2;
-
 
     //nó root da AST e flag de erro nas produções
     extern  node* start_node;
@@ -149,7 +148,7 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return ID;}
 {INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return INTLIT;}
 {STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return STRLIT;}
-{LINETERMINATOR} {linhaAux = linha; colunaAux = coluna; LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
+{LINETERMINATOR} {flag_new_line = 1;linha_aux = linha; coluna_aux = coluna; LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
 "\t"|" "    {COLUNA;}
 
 .       {printf("Line %d, column %d: illegal character (%s)\n", linha, coluna, yytext); flag_semicolon = 0; COLUNA;} 
@@ -180,14 +179,15 @@ int yywrap()
 return 1;
 }
 
-void yyerror (const char *s) { 
+void yyerror (const char *s) {
     int aux_break = 0;
+
     if(flag_activate == 1){
-        printf ("Line %d, column %d: %s: %s\n",linha-1,colunaAux, s, yytext);
+        if(aux_break != -1)
+            printf ("Line %d, column %d: %s: %s\n",linha_aux,coluna_aux, s, yytext);
+        
         aux_break = -1;
     }
-    if (strcmp(s,"\0")==0)
-     printf ("Line %d, column %d: %s: %s\n",linhaAux,colunaAux, s, yytext);
     else{
         if(aux_break != -1){
             printf ("Line %d, column %d: %s: %s\n",linha,(int)(coluna-strlen(yytext)), s, yytext);
