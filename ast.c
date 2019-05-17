@@ -95,4 +95,44 @@ void printAST(node *current, int n){
     printAST(current->brother, n);
 }
 
+//CUIDADO QUE PARA OS ERROS SÓ SE PODE ANOTAR AS VARIAVEIS HA MEDIDA QUE SE LE A ARVORE
+void create_function(func_list func_node){
+
+    func_node = (func_list)malloc(sizeof(func));
+    func_node->table = malloc(sizeof(symb_table));
+    func_node->func_vars = (vars_list)malloc(sizeof(vars));
+    func_node->func_param = (param_list)malloc(sizeof(params));
+    func_node->next = NULL;
+}
+
+void insert_table(func_list func_node, char *name, char *type, int is_func){
+
+    func_node->table->table_name = name;
+    func_node->table->table_type = type;
+    func_node->table->func_check = is_func;
+
+}
+
+void insert_param(func_list func_node, char *name, char *type){
+
+    func_node->func_param->param_name = name;
+    func_node->func_param->param_type = type;
+    func_node->func_param->next = NULL;
+
+}
+
+void insert_var(func_list func_node, char *name, char *type, char *value){
+
+    func_node->func_vars->var_name = name;
+    func_node->func_vars->var_type = type;
+    func_node->func_vars->var_value = value;
+    func_node->func_vars->next = NULL;
+}
+
+
+
+//void insert_function();
+//void insert_var();
+
+
 
