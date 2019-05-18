@@ -46,9 +46,12 @@ void printAST(node *current, int n);
 void check_brothers(node *aux, char *val);
 int count_brothers(node *start_node);
 
-//inserir nova funcao
-//criar tabela para funcao
-//inserir parametros
-//inserir variaveis
+func_list func_node;
+func_list func_header;
+
+void insert_var(func_list func_node, char *name, char *type, char *value);
+void insert_param(func_list func_node, char *name, char *type);
+void insert_table(func_list func_node, char *name, char *type, int is_func);
+void create_function(func_list func_node);
 
 

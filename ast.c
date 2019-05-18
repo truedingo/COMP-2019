@@ -67,33 +67,6 @@ int count_brothers(node *start_node)
     return n;
 }
 
-void printAST(node *current, int n){
-    int i;
-
-    if(current == NULL){
-        return;
-    }
-
-    if(strcmp(current->name, "NULL") == 0){
-        printAST(current->brother, n);
-        return;
-    }
-
-    if(strcmp(current->name, "NULL") != 0){
-        for(i=0;i<n;i++){
-            printf("..");
-        }
-        
-        if(current->value != NULL){
-            printf("%s(%s)\n",current->name, current->value);
-        }
-        else{
-            printf("%s\n",current->name);
-        }
-    }
-    printAST(current->child, n+1);
-    printAST(current->brother, n);
-}
 
 //CUIDADO QUE PARA OS ERROS SÓ SE PODE ANOTAR AS VARIAVEIS HA MEDIDA QUE SE LE A ARVORE
 void create_function(func_list func_node){
@@ -104,6 +77,7 @@ void create_function(func_list func_node){
     func_node->func_param = (param_list)malloc(sizeof(params));
     func_node->next = NULL;
 }
+
 
 void insert_table(func_list func_node, char *name, char *type, int is_func){
 
@@ -127,6 +101,43 @@ void insert_var(func_list func_node, char *name, char *type, char *value){
     func_node->func_vars->var_type = type;
     func_node->func_vars->var_value = value;
     func_node->func_vars->next = NULL;
+}
+
+
+
+void printAST(node *current, int n){
+    int i;
+
+    if(current == NULL){
+        return;
+    }
+
+    if(strcmp(current->name, "Program") == 0){
+        //inicio de program, fazer table global
+        create_function(func_node);
+        insert_table(func_node, "global", NULL, 0);
+        func_header = func_node;        
+    }
+
+    if(strcmp(current->name, "NULL") == 0){
+        printAST(current->brother, n);
+        return;
+    }
+
+    if(strcmp(current->name, "NULL") != 0){
+        for(i=0;i<n;i++){
+            printf("..");
+        }
+        
+        if(current->value != NULL){
+            printf("%s(%s)\n",current->name, current->value);
+        }
+        else{
+            printf("%s\n",current->name);
+        }
+    }
+    printAST(current->child, n+1);
+    printAST(current->brother, n);
 }
 
 
