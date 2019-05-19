@@ -2230,6 +2230,7 @@ int main(int argc, char* argv[]){
             flag=-2;
             yyparse();
             if(prod_error==0){
+                printf("ngdfb\n");
                 printAST(start_node, 0);
                 AST(start_node);
             }
