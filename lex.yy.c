@@ -642,7 +642,7 @@ char *yytext;
 
     //nó root da AST e flag de erro nas produções
     extern  node* start_node;
-    extern func_list func_header;
+    extern func_list func_node;
     extern int prod_error;
 
 
@@ -2231,7 +2231,7 @@ int main(int argc, char* argv[]){
             yyparse();
             if(prod_error==0){
                 printAST(start_node, 0);
-                print_tables(func_header);
+                AST(start_node);
             }
         }
     }

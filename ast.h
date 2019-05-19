@@ -48,12 +48,11 @@ int count_brothers(node *start_node);
 
 func_list func_node;
 func_list func_header;
-symb_table table_node;
 
 void insert_var(func_list func_node, char *name, char *type, char *value);
 void insert_param(func_list func_node, char *name, char *type);
-void insert_table(func_list func_node, char *name, char *type, int is_func);
+void insert_function(char *name, char *type, int is_func);
+void AST(node *current);
 void create_function(func_list func_node);
-void print_tables(func_list func_header);
 
 

@@ -67,15 +67,21 @@ int count_brothers(node *start_node)
     return n;
 }
 
+void insert_function(char *table_name, char *table_type, int func_check){
 
-//CUIDADO QUE PARA OS ERROS SÓ SE PODE ANOTAR AS VARIAVEIS HA MEDIDA QUE SE LE A ARVORE
-void create_function(func_list func_node){
+    func_list new_node = (func_list)malloc(sizeof(func));
+    new_node->table = malloc(sizeof(symb_table));
+    new_node->table->table_name = strdup(table_name);
+    new_node->table->table_type = strdup(table_type);
+    new_node->table->func_check = func_check;
 
-    func_node = (func_list)malloc(sizeof(func));
-    func_node->table = malloc(sizeof(symb_table));
-    func_node->func_vars = (vars_list)malloc(sizeof(vars));
-    func_node->func_param = (param_list)malloc(sizeof(params));
-    func_node->next = NULL;
+    func_list aux = func_node;
+    while(aux != NULL){
+        aux = aux->next;
+    }
+
+    aux->next = new_node;
+
 }
 
 
@@ -116,51 +122,6 @@ void printAST(node *current, int n){
         return;
     }
 
-    if(strcmp(current->name, "Program") == 0){
-
-        //inicio de program, fazer table global
-        func_node = (func_list)malloc(sizeof(func));
-        func_node->table = malloc(sizeof(symb_table));
-        func_node->func_vars = NULL;
-        func_node->func_param = NULL;
-        func_node->table->table_name = "global";
-        func_node->table->func_check = 0;
-        func_node->table->table_type = NULL;
-        func_node->func_param = NULL;
-        func_node->func_vars = NULL;
-        func_node->next = NULL;
-        func_header = func_node;
-
-    }
-
-    if(strcmp(current->name, "FuncHeader") == 0){
-
-        node *aux = current->child; 
-
-        if(strcmp(aux->name, "Id") == 0){
-            func_list new_node = (func_list)malloc(sizeof(func));
-            new_node->func_param = NULL;
-            new_node->func_vars = NULL;
-            new_node->table = malloc(sizeof(symb_table));
-            new_node->table->table_name = strdup(aux->value);
-            new_node->table->func_check = 1;
-            if(aux->brother != NULL){
-                if(strcmp(aux->brother->name, "Int") == 0){
-                    new_node->table->table_type = strdup(aux->brother->name);
-                }
-                else{
-                    new_node->table->table_type = strdup("none");
-                }
-            }
-            else{
-                new_node->table->table_type = strdup("none");
-            }
-            func_node->next = new_node;
-            new_node->next = NULL;
-        }
-
-    }
-
     if(strcmp(current->name, "NULL") == 0){
         printAST(current->brother, n);
         return;
@@ -182,24 +143,63 @@ void printAST(node *current, int n){
     printAST(current->brother, n);
 }
 
-void print_tables(func_list func_header){
+void AST(node *current){
 
-    func_list aux = func_header;
+    int i;
+
+
+    if (current == NULL)
+    {
+        return;
+    }
+    //printf("node label: %s\n", node->label);
+    if (strcmp(current->name, "Program") == 0)
+    {
+        func_node = (func_list)malloc(sizeof(func));
+        func_node->table = malloc(sizeof(symb_table));
+        func_node->func_vars = NULL;
+        func_node->func_param = NULL;
+        func_node->next = NULL;
+        insert_function("global", "none", 1);
+        insert_function("fact", "int", 1);
+        insert_function("main", "none", 1);
+
+        func_list aux = func_node;
+        while(aux!= NULL){
+            printf("\t-> %s -> %s -> %d\n", aux->table->table_name, aux->table->table_type, aux->table->func_check);
+            aux = aux->next;
+        }
+
+
+        if (current->child != NULL)
+            AST(current->child);
+        if (current->brother != NULL)
+            AST(current->brother);
+}
+
+
+}
+
+void print_tables(){
+
+    func_list aux = func_node;
+    func_list func_header = func_node;
     if(aux != NULL){
         printf("===== Global Symbol Table =====\n");
         while(aux->next != NULL){
-            printf("%s\t (%s)", aux->table->table_name, aux->table->table_type);
+            printf("%s\t (%s)\n", aux->table->table_name, aux->table->table_type);
             aux = aux->next;
         }
         aux = func_header;
-        while(aux->next != NULL){
+        /*while(aux->next != NULL){
             if(strcmp(aux->table->table_type, "none") == 0){
                 printf("===== Function %s () Symbol Table =====\n", aux->table->table_name);
             }
             else{
                 printf("===== Function %s (%s) Symbol Table =====\n", aux->table->table_name, aux->table->table_type);
             }
-        }
+            aux = aux->next;
+        }*/
     }
 }
 
