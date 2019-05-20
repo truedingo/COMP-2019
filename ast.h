@@ -9,7 +9,6 @@ typedef struct node{
     char *value; //value of the node, if it has any
 } node;
 
-
 typedef struct symb_table{
     char *table_name; //nome da table
     char *table_type; //tipo da tabela
@@ -27,7 +26,6 @@ typedef struct vars *vars_list;
 typedef struct vars{
     char *var_name;     //nome da var
     char *var_type;     //tipo da variavel
-    char *var_value;     //não sei se é preciso
     vars_list next;
 }vars;
 
@@ -46,13 +44,13 @@ void printAST(node *current, int n);
 void check_brothers(node *aux, char *val);
 int count_brothers(node *start_node);
 
-func_list func_node;
+//-------------- 
+
 func_list func_header;
 
-void insert_var(func_list func_node, char *name, char *type, char *value);
-void insert_param(func_list func_node, char *name, char *type);
-void insert_function(char *name, char *type, int is_func);
-void AST(node *current);
-void create_function(func_list func_node);
-
-
+func_list insert_table(char *table_name, char *table_type, int func_check);
+void insert_var(func_list v_list, char *name, char *type);
+void insert_param(func_list p_list, char *name, char *type);
+void print_tables();
+char *change_type(char *type);
+void semantic_analysis(node *root);

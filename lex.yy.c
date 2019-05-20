@@ -2230,9 +2230,16 @@ int main(int argc, char* argv[]){
             flag=-2;
             yyparse();
             if(prod_error==0){
-                printf("ngdfb\n");
                 printAST(start_node, 0);
-                AST(start_node);
+            }
+        }
+        if(strcmp(argv[1], "-s") == 0){
+            flag=-2;
+            yyparse();
+            if(prod_error == 0){
+                semantic_analysis(start_node);
+                print_tables();
+                printAST(start_node, 0);
             }
         }
     }
