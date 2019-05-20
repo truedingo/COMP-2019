@@ -18,8 +18,11 @@ node *create_node(char *name, char *value)
         n->value = NULL;
     }
 
+    n->annotation = NULL;
+    n->print_annot = 0;
     n->brother = NULL;
     n->child = NULL;
+
 
     return n;
 }
@@ -120,15 +123,18 @@ func_list insert_table(char *table_name, char *table_type, int func_check)
     new_node->table = malloc(sizeof(symb_table));
     new_node->table->table_name = strdup(table_name);
     new_node->table->func_check = func_check;
-    if(table_type != NULL){
+    if (table_type != NULL)
+    {
         new_node->table->table_type = strdup(table_type);
     }
-    else{
+    else
+    {
         new_node->table->table_type = NULL;
     }
     new_node->next = NULL;
 
-    if(func_header == NULL){
+    if (func_header == NULL)
+    {
         func_header = new_node;
         return func_header;
     }
@@ -149,11 +155,12 @@ void insert_var(func_list func, char *name, char *type)
     new_node->var_type = strdup(type);
     new_node->next = NULL;
 
-    if(func->func_vars == NULL){
+    if (func->func_vars == NULL)
+    {
         func->func_vars = new_node;
         return;
     }
-    
+
     vars_list aux = func->func_vars;
     while (aux->next != NULL)
     {
@@ -169,7 +176,8 @@ void insert_param(func_list func, char *name, char *type)
     new_node->param_type = strdup(type);
     new_node->next = NULL;
 
-    if(func->func_param == NULL){
+    if (func->func_param == NULL)
+    {
         func->func_param = new_node;
         return;
     }
@@ -187,26 +195,36 @@ void print_tables()
     // Print Global table
     printf("===== Global Symbol Table =====\n");
     vars_list aux_vars = func_header->func_vars;
-    while(aux_vars != NULL){
-        printf("%s\t\t%s\n", aux_vars->var_name, aux_vars->var_type);
+    while (aux_vars != NULL)
+    {
+        printf("OLAAAAAAAAAAAAAAAAA\n");
+  
+        //printf("%s\t\t%s\n", aux_vars->var_name, aux_vars->var_type);
+        printf("... %s  \n", aux_vars->var_name);
         aux_vars = aux_vars->next;
     }
+
     func_list aux = func_header->next;
-    while(aux != NULL){
+    while (aux != NULL)
+    {
         printf("%s\t(", aux->table->table_name);
         param_list aux_params = aux->func_param;
-        while(aux_params != NULL){
-            printf("%s",aux_params->param_type);
+        while (aux_params != NULL)
+        {
+            printf("%s", aux_params->param_type);
             aux_params = aux_params->next;
-            if(aux_params != NULL){
+            if (aux_params != NULL)
+            {
                 printf(",");
             }
         }
 
-        if(aux->table->table_type != NULL){
+        if (aux->table->table_type != NULL)
+        {
             printf(")\t%s\n", aux->table->table_type);
         }
-        else{
+        else
+        {
             printf(")\tnone\n");
         }
 
@@ -216,33 +234,40 @@ void print_tables()
 
     //Print Local tables
     aux = func_header->next;
-    while(aux != NULL){
+    while (aux != NULL)
+    {
         printf("===== Function %s(", aux->table->table_name);
         param_list aux_params = aux->func_param;
-        while(aux_params != NULL){
-            printf("%s",aux_params->param_type);
+        while (aux_params != NULL)
+        {
+            printf("%s", aux_params->param_type);
             aux_params = aux_params->next;
-            if(aux_params != NULL){
+            if (aux_params != NULL)
+            {
                 printf(",");
             }
         }
         printf(") Symbol Table =====\n");
 
-        if(aux->table->table_type != NULL){
+        if (aux->table->table_type != NULL)
+        {
             printf("return\t\t%s\n", aux->table->table_type);
         }
-        else{
+        else
+        {
             printf("return\t\tnone\n");
         }
 
         aux_params = aux->func_param;
-        while(aux_params != NULL){
+        while (aux_params != NULL)
+        {
             printf("%s\t\t%s\tparam\n", aux_params->param_name, aux_params->param_type);
             aux_params = aux_params->next;
         }
 
         vars_list aux_vars = aux->func_vars;
-        while(aux_vars != NULL){
+        while (aux_vars != NULL)
+        {
             printf("%s\t\t%s\n", aux_vars->var_name, aux_vars->var_type);
             aux_vars = aux_vars->next;
         }
@@ -252,58 +277,71 @@ void print_tables()
     }
 }
 
-char *change_type(char *type){
-    if(strcmp(type, "Int") == 0){
+char *change_type(char *type)
+{
+    if (strcmp(type, "Int") == 0)
+    {
         return "int";
     }
-    else if(strcmp(type, "Float32") == 0){
+    else if (strcmp(type, "Float32") == 0)
+    {
         return "float32";
     }
-    else if(strcmp(type, "Bool") == 0){
+    else if (strcmp(type, "Bool") == 0)
+    {
         return "bool";
     }
-    else if(strcmp(type, "String") == 0){
+    else if (strcmp(type, "String") == 0)
+    {
         return "string";
     }
-    else if(strcmp(type, "IntLit") == 0){
+    else if (strcmp(type, "IntLit") == 0)
+    {
         return "intLit";
     }
-    else if(strcmp(type, "RealLit") == 0){
+    else if (strcmp(type, "RealLit") == 0)
+    {
         return "realLit";
     }
-    else{
+    else
+    {
         return "strLit";
     }
 }
 
-void semantic_analysis(node *root){
+void semantic_analysis(node *root)
+{
 
     node *atual = root->child;
     node *aux1, *aux2, *aux3, *aux4, *aux5;
     char *name, *type;
 
-    func_list global_table = insert_table("Global", NULL, 0);;
+    func_list global_table = insert_table("Global", NULL, 0);
     func_list atual_table = global_table;
 
-    while(atual != NULL){
-
-        if(strcmp(atual->name, "FuncDecl") == 0){
+    while (atual != NULL)
+    {
+        if (strcmp(atual->name, "FuncDecl") == 0)
+        {
             aux1 = atual->child;
 
             // FuncHeader
-            aux2 = aux1->child; // function ID
+            aux2 = aux1->child;   // function ID
             aux3 = aux2->brother; // function type or params
-            if(strcmp(aux3->name, "FuncParams") == 0){ // function is void
+            if (strcmp(aux3->name, "FuncParams") == 0)
+            { // function is void
                 atual_table = insert_table(aux2->value, NULL, 1);
                 aux4 = aux3; // params
             }
-            else{
+            else
+            {
                 atual_table = insert_table(aux2->value, change_type(aux3->name), 1);
                 aux4 = aux3->brother; // params
             }
 
             aux5 = aux4->child;
-            while(aux5 != NULL){
+            while (aux5 != NULL)
+            {
                 type = change_type(aux5->child->name);
                 name = aux5->child->brother->value;
                 insert_param(atual_table, name, type);
@@ -312,8 +350,10 @@ void semantic_analysis(node *root){
 
             // FuncBody
             aux1 = aux1->brother->child;
-            while(aux1 != NULL){
-                if(strcmp(aux1->name, "VarDecl") == 0){
+            while (aux1 != NULL)
+            {
+                if (strcmp(aux1->name, "VarDecl") == 0)
+                {
                     type = change_type(aux1->child->name);
                     name = aux1->child->brother->value;
                     insert_var(atual_table, name, type);
@@ -321,13 +361,13 @@ void semantic_analysis(node *root){
                 aux1 = aux1->brother;
             }
         }
-        else if(strcmp(atual->name, "VarDecl") == 0){
+        else if (strcmp(atual->name, "VarDecl") == 0)
+        {
             type = change_type(atual->child->name);
             name = atual->child->brother->value;
             insert_var(atual_table, name, type);
         }
-
+    
         atual = atual->brother;
     }
-
 }

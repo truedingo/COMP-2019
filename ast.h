@@ -7,6 +7,9 @@ typedef struct node{
     struct node* child;
     char *name; //label of the node
     char *value; //value of the node, if it has any
+    int print_annot; 
+    char *annotation;
+  
 } node;
 
 typedef struct symb_table{
