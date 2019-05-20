@@ -188,7 +188,7 @@ void print_tables()
     printf("===== Global Symbol Table =====\n");
     vars_list aux_vars = func_header->func_vars;
     while(aux_vars != NULL){
-        printf("%s\t%s\n", aux_vars->var_name, aux_vars->var_type);
+        printf("%s\t\t%s\n", aux_vars->var_name, aux_vars->var_type);
         aux_vars = aux_vars->next;
     }
     func_list aux = func_header->next;
@@ -229,21 +229,21 @@ void print_tables()
         printf(") Symbol Table =====\n");
 
         if(aux->table->table_type != NULL){
-            printf("return\t%s\n", aux->table->table_type);
+            printf("return\t\t%s\n", aux->table->table_type);
         }
         else{
-            printf("return\tnone\n");
+            printf("return\t\tnone\n");
         }
 
         aux_params = aux->func_param;
         while(aux_params != NULL){
-            printf("%s\t%s\tparam\n", aux_params->param_name, aux_params->param_type);
+            printf("%s\t\t%s\tparam\n", aux_params->param_name, aux_params->param_type);
             aux_params = aux_params->next;
         }
 
         vars_list aux_vars = aux->func_vars;
         while(aux_vars != NULL){
-            printf("%s\t%s\n", aux_vars->var_name, aux_vars->var_type);
+            printf("%s\t\t%s\n", aux_vars->var_name, aux_vars->var_type);
             aux_vars = aux_vars->next;
         }
 
