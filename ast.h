@@ -7,9 +7,7 @@ typedef struct node{
     struct node* child;
     char *name; //label of the node
     char *value; //value of the node, if it has any
-    int print_annot; 
     char *annotation;
-  
 } node;
 
 typedef struct symb_table{
@@ -50,6 +48,7 @@ int count_brothers(node *start_node);
 //-------------- 
 
 func_list func_header;
+func_list global_table;
 
 func_list insert_table(char *table_name, char *table_type, int func_check);
 void insert_var(func_list v_list, char *name, char *type);
@@ -57,3 +56,6 @@ void insert_param(func_list p_list, char *name, char *type);
 void print_tables();
 char *change_type(char *type);
 void semantic_analysis(node *root);
+void annote_AST(node *current, func_list atual_table);
+char* search_var(func_list func, char *name);
+void call_ast(node *root);

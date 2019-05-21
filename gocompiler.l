@@ -173,7 +173,7 @@ int main(int argc, char* argv[]){
             if(prod_error == 0){
                 semantic_analysis(start_node);
                 print_tables();
-                printAST(start_node, 0);
+                printAST(start_node,0);
             }
         }
     }
