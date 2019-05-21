@@ -50,6 +50,7 @@ int count_brothers(node *start_node);
 func_list func_header;
 func_list global_table;
 
+
 func_list insert_table(char *table_name, char *table_type, int func_check);
 void insert_var(func_list v_list, char *name, char *type);
 void insert_param(func_list p_list, char *name, char *type);
@@ -59,3 +60,6 @@ void semantic_analysis(node *root);
 void annote_AST(node *current, func_list atual_table);
 char* search_var(func_list func, char *name);
 void call_ast(node *root);
+char *search_table(func_list func, char *name);
+func_list search_atual_table(func_list func, char *name);
+int search_var_exists(func_list func, char *name);

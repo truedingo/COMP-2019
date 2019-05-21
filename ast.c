@@ -317,6 +317,43 @@ char *search_table(func_list func, char *name)
     return NULL;
 }
 
+func_list search_atual_table(func_list func, char *name)
+{
+    func_list aux = func->next;
+    while (aux != NULL)
+    {
+        if (strcmp(aux->table->table_name, name) == 0)
+        {
+            return aux;
+        }
+        aux = aux->next;
+    }
+    return NULL;
+}
+
+int search_var_exists(func_list func, char *name)
+{
+    vars_list aux_vars = func->func_vars;
+    while (aux_vars != NULL)
+    {
+        if (strcmp(aux_vars->var_name, name) == 0)
+        {
+            return -1;
+        }
+        aux_vars = aux_vars->next;
+    }
+    param_list aux_params = func->func_param;
+    while (aux_params != NULL)
+    {
+        if (strcmp(aux_params->param_name, name) == 0)
+        {
+            return -1;
+        }
+        aux_params = aux_params->next;
+    }
+    return 0;
+}
+
 char *change_type(char *type)
 {
     if (strcmp(type, "Int") == 0)
@@ -389,6 +426,7 @@ void semantic_analysis(node *root)
             }
 
             // FuncBody
+            // filho do funcbody
             aux1 = aux1->brother->child;
             while (aux1 != NULL)
             {
@@ -396,11 +434,10 @@ void semantic_analysis(node *root)
                 {
                     type = change_type(aux1->child->name);
                     name = aux1->child->brother->value;
-                    insert_var(atual_table, name, type);
-                }
-                else
-                {
-                    //annote_AST(aux1, atual_table);
+                    int check = search_var_exists(atual_table, name);
+                    if(check == 0){
+                         insert_var(atual_table, name, type);
+                    }
                 }
                 aux1 = aux1->brother;
             }
@@ -415,6 +452,57 @@ void semantic_analysis(node *root)
         atual = atual->brother;
     }
 }
+
+void call_ast(node *root){
+             
+    func_list atual_table = global_table;
+
+    node *atual = root->child;
+    node *aux1, *aux2, *aux3, *aux4, *aux5;
+    char *name, *type;
+
+    while (atual != NULL)
+    {
+        if (strcmp(atual->name, "FuncDecl") == 0)
+        {
+            aux1 = atual->child;
+
+            // FuncHeader
+            aux2 = aux1->child;   // function ID
+            aux3 = aux2->brother; // function type or params
+           
+            if (strcmp(aux3->name, "FuncParams") == 0)
+            { // function is void
+                aux4 = aux3; // params
+            }
+            else
+            {
+                aux4 = aux3->brother; // params
+            }
+            aux5 = aux4->child;
+            while (aux5 != NULL)
+            {
+                type = change_type(aux5->child->name);
+                name = aux5->child->brother->value;
+                aux5 = aux5->brother;
+            }
+            // FuncBody
+            // filho do funcbody
+            aux1 = aux1->brother->child;
+            atual_table = search_atual_table(func_header, aux2->value);
+            while (aux1 != NULL)
+            {
+                if (strcmp(aux1->name, "VarDecl") != 0)
+                {
+                    annote_AST(aux1, atual_table);
+                }
+                aux1 = aux1->brother;
+            }
+        }
+        atual = atual->brother;
+    }
+}
+
 
 void annote_AST(node *atual_node, func_list atual_table)
 {
@@ -517,7 +605,6 @@ void annote_AST(node *atual_node, func_list atual_table)
         node *func = atual_node->child;
         char *type = search_table(func_header, func->value);
 
-        printf("---> %s \n", type);
         if (type != NULL)
         {
             func->annotation = atual_node->annotation = type;

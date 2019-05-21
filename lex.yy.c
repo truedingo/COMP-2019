@@ -2239,7 +2239,8 @@ int main(int argc, char* argv[]){
             if(prod_error == 0){
                 semantic_analysis(start_node);
                 print_tables();
-                printAST(start_node,0);
+                call_ast(start_node);
+                printAST(start_node, 0);
             }
         }
     }
