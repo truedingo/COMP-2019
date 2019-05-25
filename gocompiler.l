@@ -29,6 +29,7 @@
     extern  node* start_node;
     extern func_list func_node;
     extern int prod_error;
+    int flag_sem_errors;
 
 %}
 
@@ -108,46 +109,46 @@ LINETERMINATOR \n|{RETURNCHAR}|({RETURNCHAR})\n
 {SEMICOLON} {if(flag==-1 ){printf("SEMICOLON\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return SEMICOLON;}
 {BLANKID} {if(flag==-1 ){printf("BLANKID\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return BLANKID;}
 {PACKAGE} {if(flag==-1 ){printf("PACKAGE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return PACKAGE;}
-{RETURN} {if(flag==-1 ){printf("RETURN\n");} flag_semicolon = 1; COLUNA; if(flag==-2) return RETURN;}
-{AND} {if(flag==-1 ){printf("AND\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return AND;}
-{ASSIGN} {if(flag==-1 ){printf("ASSIGN\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return ASSIGN;}
-{STAR} {if(flag==-1 ){printf("STAR\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return STAR;}
+{RETURN} {if(flag==-1 ){printf("RETURN\n");} flag_semicolon = 1; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return RETURN;}}
+{AND} {if(flag==-1 ){printf("AND\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext));return AND;}}
+{ASSIGN} {if(flag==-1 ){printf("ASSIGN\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return ASSIGN;}}
+{STAR} {if(flag==-1 ){printf("STAR\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return STAR;}}
 {COMMA} {if(flag==-1 ){printf("COMMA\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return COMMA;}
-{DIV} {if(flag==-1 ){printf("DIV\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return DIV;}
-{EQ} {if(flag==-1 ){printf("EQ\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return EQ;}
-{GE} {if(flag==-1 ){printf("GE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return GE;}
-{GT} {if(flag==-1 ){printf("GT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return GT;}
+{DIV} {if(flag==-1 ){printf("DIV\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return DIV;}}
+{EQ} {if(flag==-1 ){printf("EQ\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext));return EQ;}}
+{GE} {if(flag==-1 ){printf("GE\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return GE;}}
+{GT} {if(flag==-1 ){printf("GT\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return GT;}}
 {LBRACE} {if(flag==-1 ){printf("LBRACE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return LBRACE;}
-{LE} {if(flag==-1 ){printf("LE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return LE;}
+{LE} {if(flag==-1 ){printf("LE\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return LE;}}
 {LPAR} {if(flag==-1 ){printf("LPAR\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return LPAR;}
 {LSQ} {if(flag==-1 ){printf("LSQ\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return LSQ;}
-{LT} {if(flag==-1 ){printf("LT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return LT;}
-{MINUS} {if(flag==-1 ){printf("MINUS\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return MINUS;}
-{MOD} {if(flag==-1 ){printf("MOD\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return MOD;}
-{NE} {if(flag==-1 ){printf("NE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return NE;}
-{NOT} {if(flag==-1 ){printf("NOT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return NOT;}
-{OR} {if(flag==-1 ){printf("OR\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return OR;}
-{PLUS} {if(flag==-1 ){printf("PLUS\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return PLUS;}
+{LT} {if(flag==-1 ){printf("LT\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return LT;}}
+{MINUS} {if(flag==-1 ){printf("MINUS\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return MINUS;}}
+{MOD} {if(flag==-1 ){printf("MOD\n");} flag_semicolon = 0; COLUNA; if(flag==-2) {yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return MOD;}}
+{NE} {if(flag==-1 ){printf("NE\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return NE;}}
+{NOT} {if(flag==-1 ){printf("NOT\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return NOT;}}
+{OR} {if(flag==-1 ){printf("OR\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext));return OR;}}
+{PLUS} {if(flag==-1 ){printf("PLUS\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return PLUS;}}
 {RBRACE} {if(flag==-1 ){printf("RBRACE\n");} flag_semicolon = 1; COLUNA; if(flag==-2) return RBRACE;}
 {RPAR} {if(flag==-1 ){printf("RPAR\n");} flag_semicolon = 1; COLUNA; if(flag==-2) return RPAR;}
 {RSQ} {if(flag==-1 ){printf("RSQ\n");} flag_semicolon = 1; COLUNA; if(flag==-2) return RSQ;}
 {ELSE} {if(flag==-1 ){printf("ELSE\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return ELSE;}
 {FOR} {if(flag==-1 ){printf("FOR\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return FOR;}
-{IF} {if(flag==-1 ){printf("IF\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return IF;}
+{IF} {if(flag==-1 ){printf("IF\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return IF;}}
 {VAR} {if(flag==-1 ){printf("VAR\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return VAR;}
 {INT} {if(flag==-1 ){printf("INT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return INT;}
 {FLOAT32} {if(flag==-1 ){printf("FLOAT32\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return FLOAT32;}
 {BOOL} {if(flag==-1 ){printf("BOOL\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return BOOL;}
-{STRING} {if(flag==-1 ){printf("STRING\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return STRING;}
-{PRINT} {if(flag==-1 ){printf("PRINT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return PRINT;}
-{PARSEINT} {if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return PARSEINT;}
+{STRING} {if(flag==-1 ){printf("STRING\n");} flag_semicolon = 0; COLUNA; if(flag==-2){yylval.value = create_token(NULL, linha, coluna-strlen(yytext)); return STRING;}}
+{PRINT} {if(flag==-1 ){printf("PRINT\n");} flag_semicolon = 0; COLUNA; if(flag==-2){ yylval.value = create_token(NULL, linha, coluna-strlen(yytext)) ;return PRINT;}}
+{PARSEINT} {if(flag==-1 ){printf("PARSEINT\n");} flag_semicolon = 0; COLUNA; yylval.value = create_token(yytext, linha, coluna-strlen(yytext)); if(flag==-2) return PARSEINT;}
 {FUNC} {if(flag==-1 ){printf("FUNC\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return FUNC;}
 {CMDARGS} {if(flag==-1 ){printf("CMDARGS\n");} flag_semicolon = 0; COLUNA; if(flag==-2) return CMDARGS;}
-{REALLIT} {if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return REALLIT;}
-{RESERVED} {if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return RESERVED;}
-{ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return ID;}
-{INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return INTLIT;}
-{STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA; yylval.string=(char*)strdup(yytext); if(flag==-2) return STRLIT;}
+{REALLIT} {if(flag==-1 ){printf("REALLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.value = create_token(yytext, linha, coluna-strlen(yytext)); if(flag==-2) return REALLIT;}
+{RESERVED} {if(flag==-1 ){printf("RESERVED(%s)\n", yytext);} flag_semicolon = 0; COLUNA; yylval.value = create_token(yytext, linha, coluna-strlen(yytext)); if(flag==-2) return RESERVED;}
+{ID} {if(flag==-1 ){printf("ID(%s)\n", yytext);} flag_semicolon = 1; COLUNA;yylval.value = create_token(yytext, linha, coluna-strlen(yytext)); if(flag==-2) return ID;}
+{INTLIT} {if(flag==-1 ){printf("INTLIT(%s)\n", yytext);} flag_semicolon = 1; COLUNA; yylval.value = create_token(yytext, linha, coluna-strlen(yytext)); if(flag==-2) return INTLIT;}
+{STRLIT} {if(flag==-1 ){printf("STRLIT(%s)\n", yytext);}flag_semicolon = 1; COLUNA; yylval.value = create_token(yytext, linha, coluna-strlen(yytext)); if(flag==-2) return STRLIT;}
 {LINETERMINATOR} {linha_aux = linha; coluna_aux = coluna; LINHA;if(flag_semicolon == 1){if(flag==-1 )printf("SEMICOLON\n");flag_semicolon = 0;if(flag==-2) return SEMICOLON;}}
 "\t"|" "    {COLUNA;}
 
@@ -171,10 +172,14 @@ int main(int argc, char* argv[]){
             flag=-2;
             yyparse();
             if(prod_error == 0){
+                flag_sem_errors = 0;
                 semantic_analysis(start_node);
-                print_tables();
                 call_ast(start_node);
-                printAST(start_node, 0);
+                //printAST(start_node, 0);
+                if(flag_sem_errors != -1){
+                    print_tables();
+                    printAST(start_node, 0);
+                }
             }
         }
     }

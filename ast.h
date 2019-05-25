@@ -2,12 +2,21 @@
 #include <stdio.h>
 #include <string.h>
 
+// ....................... errors .................................
+typedef struct token{
+    int line, column;
+    char *value;
+} token;
+// ................................................................
+
 typedef struct node{
     struct node* brother;
     struct node* child;
     char *name; //label of the node
     char *value; //value of the node, if it has any
     char *annotation;
+    int line;
+    int column;
 } node;
 
 typedef struct symb_table{
@@ -38,7 +47,9 @@ typedef struct func{
     func_list next;
 }func;
 
-node *create_node(char *name, char *value);
+
+
+node *create_node(char *name, char *value, int line, int column);
 void add_child(node *dad, node * child);
 void add_brother(node *aux_brother, node *new_brother);
 void printAST(node *current, int n);
@@ -50,6 +61,7 @@ int count_brothers(node *start_node);
 func_list func_header;
 func_list global_table;
 
+extern int flag_sem_errors;
 
 func_list insert_table(char *table_name, char *table_type, int func_check);
 void insert_var(func_list v_list, char *name, char *type);
@@ -60,6 +72,12 @@ void semantic_analysis(node *root);
 void annote_AST(node *current, func_list atual_table);
 char* search_var(func_list func, char *name);
 void call_ast(node *root);
-char *search_table(func_list func, char *name);
+char *search_table(func_list func, char *params, char *name);
 func_list search_atual_table(func_list func, char *name);
 int search_var_exists(func_list func, char *name);
+
+token *create_token(char *value, int line, int column);
+int search_function_exists(func_list func, char *name);
+
+
+

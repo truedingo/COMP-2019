@@ -3,7 +3,27 @@
 #include <string.h>
 #include "ast.h"
 
-node *create_node(char *name, char *value)
+token *create_token(char *value, int line, int column)
+{
+
+    token *t = (token *)malloc(sizeof(token));
+
+    if (value != NULL)
+    {
+        t->value = (char *)strdup(value);
+    }
+    else
+    {
+        t->value = NULL;
+    }
+
+    t->line = line;
+    t->column = column;
+
+    return t;
+}
+
+node *create_node(char *name, char *value, int line, int column)
 {
     node *n = (node *)malloc(sizeof(node));
 
@@ -21,6 +41,8 @@ node *create_node(char *name, char *value)
     n->annotation = NULL;
     n->brother = NULL;
     n->child = NULL;
+    n->line = line;
+    n->column = column;
 
     return n;
 }
@@ -57,7 +79,7 @@ void check_brothers(node *aux, char *val)
     while (aux->brother != NULL)
     {
         aux = aux->brother;
-        node *new_child = create_node(val, NULL);
+        node *new_child = create_node(val, NULL, 0, 0);
         node *child = aux->child;
         aux->child = new_child;
         add_brother(new_child, child);
@@ -303,14 +325,40 @@ char *search_var(func_list func, char *name)
     return NULL;
 }
 
-char *search_table(func_list func, char *name)
+char *search_table(func_list func, char *params, char *name)
 {
     func_list aux = func->next;
     while (aux != NULL)
     {
         if (strcmp(aux->table->table_name, name) == 0)
         {
-            return aux->table->table_type;
+
+            param_list aux_params = aux->func_param;
+
+            char types[1024];
+            strcpy(types, "(");
+            while (aux_params != NULL)
+            {
+                strcat(types, aux_params->param_type);
+                aux_params = aux_params->next;
+                if (aux_params != NULL)
+                {
+                    strcat(types, ",");
+                }
+            }
+            strcat(types, ")");
+
+            if (strcmp(types, params) == 0)
+            {
+                // if (strcmp(types, "()") == 0)
+                // {
+                //     return "none";
+                // }
+                if(aux->table->table_type == NULL){
+                    return "none";
+                }
+                return aux->table->table_type;
+            }
         }
         aux = aux->next;
     }
@@ -329,6 +377,21 @@ func_list search_atual_table(func_list func, char *name)
         aux = aux->next;
     }
     return NULL;
+}
+
+//retorna 0 se encontrar e -1 se nao encontrar
+int search_function_exists(func_list func, char *name)
+{
+    func_list aux = func->next;
+    while (aux != NULL)
+    {
+        if (strcmp(aux->table->table_name, name) == 0)
+        {
+            return -1;
+        }
+        aux = aux->next;
+    }
+    return 0;
 }
 
 int search_var_exists(func_list func, char *name)
@@ -403,7 +466,15 @@ void semantic_analysis(node *root)
             aux1 = atual->child;
 
             // FuncHeader
-            aux2 = aux1->child;   // function ID
+            aux2 = aux1->child; // function ID
+
+            int check = search_function_exists(func_header, aux2->value);
+            if (check != 0)
+            {
+                flag_sem_errors = -1;
+                printf("Line %d, column %d: Symbol %s already defined\n", aux2->line, aux2->column, aux2->value);
+            }
+
             aux3 = aux2->brother; // function type or params
             if (strcmp(aux3->name, "FuncParams") == 0)
             { // function is void
@@ -435,8 +506,14 @@ void semantic_analysis(node *root)
                     type = change_type(aux1->child->name);
                     name = aux1->child->brother->value;
                     int check = search_var_exists(atual_table, name);
-                    if(check == 0){
-                         insert_var(atual_table, name, type);
+                    if (check == 0)
+                    {
+                        insert_var(atual_table, name, type);
+                    }
+                    else
+                    {
+                        flag_sem_errors = -1;
+                        printf("Line %d, column %d: Symbol %s already defined\n", aux1->line, aux1->column, aux1->value);
                     }
                 }
                 aux1 = aux1->brother;
@@ -445,16 +522,27 @@ void semantic_analysis(node *root)
         else if (strcmp(atual->name, "VarDecl") == 0)
         {
             type = change_type(atual->child->name);
-            name = atual->child->brother->value;
-            insert_var(atual_table, name, type);
-        }
+            node *id = atual->child->brother;
+            name = id->value;
 
+            int check = search_var_exists(atual_table, name);
+            if (check == 0)
+            {
+                insert_var(atual_table, name, type);
+            }
+            else
+            {
+                flag_sem_errors = -1;
+                printf("Line %d, column %d: Symbol %s already defined\n", id->line, id->column, id->value);
+            }
+        }
         atual = atual->brother;
     }
 }
 
-void call_ast(node *root){
-             
+void call_ast(node *root)
+{
+
     func_list atual_table = global_table;
 
     node *atual = root->child;
@@ -470,9 +558,9 @@ void call_ast(node *root){
             // FuncHeader
             aux2 = aux1->child;   // function ID
             aux3 = aux2->brother; // function type or params
-           
+
             if (strcmp(aux3->name, "FuncParams") == 0)
-            { // function is void
+            {                // function is void
                 aux4 = aux3; // params
             }
             else
@@ -503,36 +591,111 @@ void call_ast(node *root){
     }
 }
 
-
 void annote_AST(node *atual_node, func_list atual_table)
 {
-
     if (atual_node == NULL)
     {
         return;
     }
 
-    else if (strcmp(atual_node->name, "Not") == 0)
-    {
-        atual_node->annotation = strdup("bool");
-        annote_AST(atual_node->child, atual_table);
-    }
+    //printf("node name: %s\n", atual_node->name);
 
-    else if (strcmp(atual_node->name, "Or") == 0 || strcmp(atual_node->name, "And") == 0 || strcmp(atual_node->name, "Eq") == 0 || strcmp(atual_node->name, "Ne") == 0 || strcmp(atual_node->name, "Lt") == 0 || strcmp(atual_node->name, "Gt") == 0 || strcmp(atual_node->name, "Le") == 0 || strcmp(atual_node->name, "Ge") == 0 )
+    if (strcmp(atual_node->name, "Not") == 0)
+    {
+        annote_AST(atual_node->child, atual_table);
+        if (strcmp(atual_node->child->annotation, "bool") != 0)
+        {
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Operator ! cannot be applied to type %s\n", atual_node->line, atual_node->column, atual_node->child->annotation);
+        }
+        else
+        {
+            atual_node->annotation = strdup("bool");
+        }
+    }
+    else if (strcmp(atual_node->name, "Eq") == 0 || strcmp(atual_node->name, "Ne") == 0 || strcmp(atual_node->name, "Lt") == 0 || strcmp(atual_node->name, "Gt") == 0 || strcmp(atual_node->name, "Le") == 0 || strcmp(atual_node->name, "Ge") == 0)
+    {
+        annote_AST(atual_node->child, atual_table);
+        annote_AST(atual_node->child->brother, atual_table);
+
+        char *operator;
+        if (strcmp(atual_node->name, "Eq") == 0)
+        {
+            operator= "==";
+        }
+        else if (strcmp(atual_node->name, "Ne") == 0)
+        {
+            operator= "!=";
+        }
+        else if (strcmp(atual_node->name, "Lt") == 0)
+        {
+            operator= "<";
+        }
+        else if (strcmp(atual_node->name, "Gt") == 0)
+        {
+            operator= ">";
+        }
+        else if (strcmp(atual_node->name, "Ge") == 0)
+        {
+            operator= ">=";
+        }
+        else if (strcmp(atual_node->name, "Le") == 0)
+        {
+            operator= "<=";
+        }
+
+        if (strcmp(atual_node->child->annotation, atual_node->child->brother->annotation) == 0)
+        {
+            atual_node->annotation = strdup("bool");
+        }
+        else
+        {
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, operator, atual_node->child->annotation, atual_node->child->brother->annotation);
+  
+        }
+    }
+    else if (strcmp(atual_node->name, "Or") == 0 || strcmp(atual_node->name, "And") == 0)
     {
 
         annote_AST(atual_node->child, atual_table);
         annote_AST(atual_node->child->brother, atual_table);
 
-
-        atual_node->annotation = strdup("bool");
+        if (strcmp(atual_node->child->annotation, atual_node->child->brother->annotation) == 0 &&
+            strcmp(atual_node->child->annotation, "bool") == 0)
+        {
+            atual_node->annotation = atual_node->child->annotation;
+        }
+        else
+        {
+            atual_node->annotation = "undef";
+            if (strcmp(atual_node->name, "Or") == 0)
+            {
+                printf("Line %d, column %d: Operator || cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, atual_node->child->annotation, atual_node->child->brother->annotation);
+            }
+            else
+            {
+                printf("Line %d, column %d: Operator && cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, atual_node->child->annotation, atual_node->child->brother->annotation);
+            }
+        }
     }
-    else if(strcmp(atual_node->name, "Mod") == 0){
+    else if (strcmp(atual_node->name, "Mod") == 0)
+    {
         annote_AST(atual_node->child, atual_table);
         annote_AST(atual_node->child->brother, atual_table);
 
+        if (strcmp(atual_node->child->annotation, atual_node->child->brother->annotation) == 0 &&
+            strcmp(atual_node->child->annotation, "int") == 0)
+        {
+            atual_node->annotation = strdup("int");
+        }
+        else
+        {
+            
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Operator %% cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, atual_node->child->annotation, atual_node->child->brother->annotation);
 
-        atual_node->annotation = strdup("int");
+        }
     }
 
     else if (strcmp(atual_node->name, "IntLit") == 0 || strcmp(atual_node->name, "Int") == 0)
@@ -547,35 +710,44 @@ void annote_AST(node *atual_node, func_list atual_table)
 
     else if (strcmp(atual_node->name, "Add") == 0 || strcmp(atual_node->name, "Sub") == 0 || strcmp(atual_node->name, "Mul") == 0 || strcmp(atual_node->name, "Div") == 0)
     {
-        
+
         annote_AST(atual_node->child, atual_table);
         annote_AST(atual_node->child->brother, atual_table);
 
+        char *operator;
+        if (strcmp(atual_node->name, "Add") == 0)
+        {
+            operator= "+";
+        }
+        else if (strcmp(atual_node->name, "Sub") == 0)
+        {
+            operator= "-";
+        }
+        else if (strcmp(atual_node->name, "Mul") == 0)
+        {
+            operator= "*";
+        }
+        else if (strcmp(atual_node->name, "Div") == 0)
+        {
+            operator= "/";
+        }
 
         if (strcmp(atual_node->child->annotation, atual_node->child->brother->annotation) == 0)
         {
             atual_node->annotation = atual_node->child->annotation;
         }
-        else if (strcmp(atual_node->child->annotation, "float32") == 0 || strcmp(atual_node->child->brother->annotation, "float32") == 0)
+        else
         {
-            atual_node->annotation = atual_node->child->annotation;
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Operator %s cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, operator, atual_node->child->annotation, atual_node->child->brother->annotation);
         }
-        else if (strcmp(atual_node->child->annotation, "string") == 0 || strcmp(atual_node->child->brother->annotation, "string") == 0)
-        {
-            atual_node->annotation = atual_node->child->annotation;
-        }
-        else if (strcmp(atual_node->child->annotation, "int") == 0 || strcmp(atual_node->child->brother->annotation, "int") == 0)
-        {
-            atual_node->annotation = atual_node->child->annotation;
-        }
-
     }
     else if (strcmp(atual_node->name, "Minus") == 0 || strcmp(atual_node->name, "Plus") == 0)
     {
         annote_AST(atual_node->child, atual_table);
         atual_node->annotation = atual_node->child->annotation;
     }
-    else if (strcmp(atual_node->name, "RealLit") == 0 || strcmp(atual_node->name, "Float32") == 0  )
+    else if (strcmp(atual_node->name, "RealLit") == 0 || strcmp(atual_node->name, "Float32") == 0)
     {
         atual_node->annotation = strdup("float32");
     }
@@ -598,21 +770,17 @@ void annote_AST(node *atual_node, func_list atual_table)
             {
                 atual_node->annotation = type;
             }
+            else
+            {
+                flag_sem_errors = -1;
+                printf("Line %d, column %d: Cannot find symbol %s\n", atual_node->line, atual_node->column, atual_node->value);
+                atual_node->annotation = "undef";
+            }
         }
     }
     else if (strcmp(atual_node->name, "Call") == 0)
     {
         node *func = atual_node->child;
-        char *type = search_table(func_header, func->value);
-
-        if (type != NULL)
-        {
-            func->annotation = atual_node->annotation = type;
-        }
-        else
-        {
-            //error
-        }
 
         char types[255];
         strcpy(types, "(");
@@ -630,21 +798,54 @@ void annote_AST(node *atual_node, func_list atual_table)
         strcat(types, ")");
         func->annotation = strdup(types);
 
+        char *type = search_table(func_header, func->annotation, func->value);
+
+        if (type != NULL)
+        {
+            if(strcmp(type, "none") != 0){
+                atual_node->annotation = type;
+            }
+        }
+        else
+        {
+            //error
+            flag_sem_errors = -1;
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Cannot find symbol %s%s\n", func->line, func->column, func->value, func->annotation);
+        }
     }
 
     else if (strcmp(atual_node->name, "Assign") == 0)
     {
         annote_AST(atual_node->child, atual_table);
-        annote_AST(atual_node->brother, atual_table);
         annote_AST(atual_node->child->brother, atual_table);
 
-        atual_node->annotation = atual_node->child->annotation;
+        if (strcmp(atual_node->child->annotation, atual_node->child->brother->annotation) == 0)
+        {
+            atual_node->annotation = atual_node->child->annotation;
+        }
+        else
+        {
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Operator = cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, atual_node->child->annotation, atual_node->child->brother->annotation);
+        }
     }
 
     else if (strcmp(atual_node->name, "ParseArgs") == 0)
     {
         annote_AST(atual_node->child, atual_table);
         annote_AST(atual_node->child->brother, atual_table);
+
+        if (strcmp(atual_node->child->annotation, atual_node->child->brother->annotation) == 0 &&
+            strcmp(atual_node->child->annotation, "int") == 0)
+        {
+            atual_node->annotation = atual_node->child->annotation;
+        }
+        else
+        {
+            atual_node->annotation = "undef";
+            printf("Line %d, column %d: Operator strconv.Atoi cannot be applied to types %s, %s\n", atual_node->line, atual_node->column, atual_node->child->annotation, atual_node->child->brother->annotation);
+        }
 
         atual_node->annotation = atual_node->child->annotation;
     }
@@ -660,25 +861,26 @@ void annote_AST(node *atual_node, func_list atual_table)
     }
     else if (strcmp(atual_node->name, "Block") == 0)
     {
-        
+
         node *aux = atual_node->child;
         while (aux != NULL)
         {
-            //printf("---> %s \n", aux->name);
             annote_AST(aux, atual_table);
-    
+
             aux = aux->brother;
         }
     }
 
-     else if (strcmp(atual_node->name, "Return") == 0)
+    else if (strcmp(atual_node->name, "Return") == 0)
     {
-          if(atual_node->child != NULL){
-              annote_AST(atual_node->child, atual_table);
-          }
+        if (atual_node->child != NULL)
+        {
+            annote_AST(atual_node->child, atual_table);
+        }
     }
 
-    else if(strcmp(atual_node->name, "For") == 0){
+    else if (strcmp(atual_node->name, "For") == 0)
+    {
         annote_AST(atual_node->child, atual_table);
         annote_AST(atual_node->child->brother, atual_table);
     }
